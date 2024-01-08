@@ -1,0 +1,77 @@
+{
+  "MHL": {
+    "PickAThing": {
+      "Title": "Pick A Thing",
+      "Error": {
+        "ThingsFormat": "`things` must be an array of {name:,value:, img?:,identifier?:} objects.",
+        "MalformedThing": "Provided thing lacked valid name or value."
+      }
+    },
+    "Macro": {
+      "FascinatingPerformance": {
+        "Error": {
+          "MustHaveFeat": "Selected actor must have the Fascinating Performance feat.",
+          "MinimumTrained": "Must be at least Trained in Performance to use, or even have taken, Fascinating Performance.",
+          "SingleTargetOnly": "You are only Trained in performance, so are limited to a single target.",
+          "FourTargetsOnly": "You are only Expert in performance, so are limited to 4 targets.",
+          "TenTargetsOnly": "You are only Master in performance, so are limited to 10 targets."
+        },
+        "Warning": {
+          "TargetImmune": "Target \"{name}\" is immune to being fascinated."
+        }
+      },
+      "LashingCurrents": {
+        "Error": {
+          "NoneSelected": "No weapon selected.",
+          "NoExistingFound": "No old-style Lashing Currents weapon found on the actor of selected token \"{name}\"."
+        }
+      }
+    },
+    "GetAllFromAllowedPacks": {
+      "Error": {
+        "FieldsFormat": "`fields` must be an array of only strings."
+      }
+    },
+    "PickItemFromActor": {
+      "NoItemsOfType": "Selected actor lacks any items of type \"{itemType}\".",
+      "FilterUnmatched": "Provided filter produced no valid items.",
+      "NoMatchingHeld": "Selected actor is not holding any matching items."
+    },
+    "Token": {
+      "Error": {
+        "Fallback": ", or a token of your assigned character on the current scene",
+        "NotAnySelected": "Must have at least one token selected{fallback}.",
+        "NotOneSelected": "Must have exactly one token selected{fallback}."
+      }
+    },
+    "Target": {
+      "Error": {
+        "NotOneTargetted": "Must have exactly one token targetted.",
+        "NotAnyTargetted": "Must have at least one token targetted."
+      },
+      "Info": {
+        "Fallback": "This operation requires a single target, using first target \"{name}\"."
+      }
+    },
+    "User": {
+      "Error": {
+        "NotAUser": "Provided user was not a foundry User."
+      }
+    },
+    "Error": {
+      "Generic": "You broke something.",
+      "BadErrorString": "Provided garbage string to error handler.",
+      "InvalidType": "Invalid type \"{type}\" provided.",
+      "Type": {
+        "Folder": "{var} must be a Folder document or the ID of one.",
+        "Function": "{var} must be a Function."
+      }
+    },
+    "Settings": {
+      "NotifyOnError": {
+        "Name": "Banner Notifications",
+        "Hint": "Show banner notifications on macro error? (errors will be in console either way)"
+      }
+    }
+  }
+}
