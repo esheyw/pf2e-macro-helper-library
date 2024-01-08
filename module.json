@@ -32,7 +32,7 @@
         "compatibility": {
           "minimum": "5.12"
         }
-      }      
+      }
     ]
   },
   "license": "LICENSE",
@@ -41,5 +41,8 @@
       "extensions": ["css", "hbs", "json"],
       "paths": ["lang", "styles", "templates"]
     }
-  }
+  },
+  "manifest": "updatedByRelease",
+  "url": "updatedByRelease",
+  "download": "updatedByRelease"
 }
