@@ -10,9 +10,9 @@ Requires one token selected, and at least one target. Has handling for target li
 Implements the Relic Gift of the same name. Prompts the user to select a weapon, and adds a Strike RE and attendant WeaponPotency, Striking, and AdjustStrike rules to mirror the weapon's property runes. Run again on the same actor to remove the rules. Does not prevent you from using the weapon's base strike while active; No practical way to do that without being more destructive.
 #### Recover Old Lashing Currents (`async recoverOldLashingCurrents()`)
 For recovering weapons hidden in flags by the old Lashing Currents macro originally shipped with the PF2e Relics module.
-#### Drop Held Torch (`async dropHeldTorch()`) *Requires Item Piles*
+#### Drop Held Torch (`async dropHeldTorch()`) *Requires Item Piles*  
 Requires one token only selected, and a currently held torch. Creates an Item Pile containing the torch, removing it from the actor. If the torch was lit, apply that light to the resulting pile token. Significant generalization and improvements planned.
----
+
 ## Existing Helper Functions:
 Helpers are accessed via `game.pf2emhl.`
 ### Token and Target helpers
