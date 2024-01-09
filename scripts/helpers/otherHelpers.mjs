@@ -8,6 +8,7 @@ export async function applyOwnshipToFolderStructure(root, exemplar) {
   const ids = getIDsFromFolder(root); // handles type checking of root
   const updates = ids.map((id) => fu.flattenObject({ _id: id, ownership: exemplar.ownership }));
   const dc = CONFIG[root.type].documentClass;
+  console.warn({dc, root})
   await dc.updateDocuments(updates);
 }
 

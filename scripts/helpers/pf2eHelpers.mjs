@@ -5,7 +5,7 @@ import { prependIndefiniteArticle } from "./stringHelpers.mjs";
 
 const PREFIX = "MHL";
 export function levelBasedDC(level) {
-  const func = "levelBasedDC";
+  const func = "levelBasedDC: ";
   if (typeof level !== "number") {
     throw MHLError(`${PREFIX}.Error.Type.Number`, { var: "level" }, { func, log: { level } });
   }
@@ -27,7 +27,7 @@ export function levelBasedDC(level) {
 
 export async function setInitiativeStatistic(actor, statistic = "perception") {
   return await actor.update({
-    "system.attributes.initiative.statistic": statistic,
+    "system.initiative.statistic": statistic,
   });
 }
 

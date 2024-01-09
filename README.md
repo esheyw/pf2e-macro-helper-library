@@ -2,6 +2,8 @@
 This module exists because I'm not good enough at TypeScript to contribute directly to Workbench. 
 It is a collection of macros and helper functions I've written for PF2e. It will (hopefully) be continually expanding. If you have a macro you'd like to contribute, and it's unsuitable for inclusion in Symon's repo (ie, it uses some of the helper functions provided by this module), feel free to open a PR, or open an issue if you don't want to git.
 
+[Patch Notes](https://github.com/esheyw/pf2e-macro-helper-library/blob/main/CHANGELOG.md)
+
 ## Existing Macros:
 Macros are accessed via `game.pf2emhl.macros.`
 #### Fascinating Performance (`async fascinatingPerformance()`)

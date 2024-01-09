@@ -5,7 +5,7 @@ export function oneTokenOnly(fallback = true) {
   const tokens = anyTokens(fallback);
   if (tokens.length > 1) {
     //if it was 0 it got caught by anyTokens
-    throw MHLError(`${PREFIX}.Error.Token.NotOneSelected`, {
+    throw MHLError(`${PREFIX}.Error.NotOneSelected`, {
       fallback: fallback ? `${PREFIX}.Error.Fallback` : "",
     });
   }
