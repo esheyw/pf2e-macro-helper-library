@@ -15,6 +15,8 @@ Requires one token only selected, and a currently held torch. Creates an Item Pi
 
 ## Existing Helper Functions:
 Helpers are accessed via `game.pf2emhl.`
+
+---
 ### Token and Target helpers  
 These are mostly replacing one-liners, but I got tired of typing out all my error handling for this stuff every time.
 #### `oneTokenOnly(fallback = true)`  
@@ -25,6 +27,7 @@ Returns an array of selected token placeables, erroring if none selected, unless
 Returns a single token placeable, targetted by the specified user (defaulting to the user running the macro). Errors if user has no targets, or more than one target. Can override the latter behaviour with the `useFirst` parameter, which will suppress errors for >1 target and simply return the first target of the given user.
 #### `anyTargets(user = game.user)`  
 Returns an array of token placeables, targetted by the specified user, as above. Errors if no targets found.
+
 ---
 ### String helpers
 #### `localize(str, data = {}, { defaultEmpty = true } = {})`  
@@ -35,6 +38,7 @@ A reimplementaion of `game.i18n.format()` with some extra handling:
 Returns the provided string prepended with either 'a' or 'an' (lowercase), as appropriate.
 #### `capitalize(string)`  
 Returns the provided string with the first character having `.toUpperCase()` applied to it.
+
 ---
 ### Error Handling helpers
 #### `localizedError(str, data = {}, { notify = null, prefix = "", log = {} } = {})`  
@@ -43,6 +47,7 @@ Returns an `Error` with the message having been passed through `localize()` as a
 Localizes `str` with `data`, preprends `prefix`, and calls `ui.notifications[type]` with the result and `console`. Errors if `type` is not `info`, `warn`, or `error`. If `notify` is nullish, falls back on the module setting, as above. If `log` is provided and is an object, it will be passed to `console[type]()`. `notify` functions as above.
 #### `MHLError(str, data = {}, { notify = null, prefix = "MacroHelperLibrary: ", log = {}, func = null } = {})`  
 A simple wrapper on `localizedError` above, pre-fills the prefix for this library's calls, and provides the `func` variable which, if provided, is inserted between the prefix and the rest of the error string, for more a more granular 'where did this error come from' report.
+
 ---
 ### PF2e-specific Helpers
 #### `levelBasedDC(level)`  
@@ -64,6 +69,7 @@ Returns an array of index entries (if `fetch` is `false`) or Documents (if `fetc
 - `strictSourcing`: If `true`, will suppress documents with missing source information, otherwise they're let through. Depending on how thorough your content module author(s) is at setting publication data, this could block a significant number of documents.
 - `fetch`: If `true`, returns whole documents, otherwise (default) returns only the compendium index data.
 **NOTE**: if the CB has not yet been initialized when called, there will be significant (couple seconds) delay on first run while that's handled.
+
 ---
 ### Others (TODO: better categories)
 #### `isOwnedBy(doc, user)`  
