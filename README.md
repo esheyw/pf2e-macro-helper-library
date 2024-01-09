@@ -89,7 +89,7 @@ Provides a dialog to pick from a list of choices. Merges provided `dialogOptions
   identifier?: <string>
 }
 ```
-Example image (produced via the following helper): 
+Example image (produced via pickItemFromActor above): 
 
 ![](https://i.imgur.com/5pHRAl7.png)
 

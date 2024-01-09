@@ -32,6 +32,12 @@
           "minimum": "5.12"
         }
       }
+    ],
+    "recommended": [
+      {
+        "id":"item-piles",
+        "type":"module"
+      }
     ]
   },
   "license": "LICENSE",
@@ -44,5 +50,8 @@
   "version": "0.1",
   "manifest": "updatedByRelease",
   "url": "updatedByRelease",
-  "download": "updatedByRelease"
+  "download": "updatedByRelease",
+  "readme":"https://github.com/esheyw/pf2e-macro-helper-library/blob/main/README.md",
+  "bugs":"https://github.com/esheyw/pf2e-macro-helper-library/issues",
+  "changelog": "https://github.com/esheyw/pf2e-macro-helper-library/blob/main/CHANGELOG.md"
 }
