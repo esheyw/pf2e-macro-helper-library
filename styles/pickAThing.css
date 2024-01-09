@@ -1,29 +1,31 @@
-.pick-a-thing.dialog .dialog-buttons {
+.pick-a-thing.window-app .dialog-buttons {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
-.pick-a-thing.dialog img {
+.pick-a-thing.window-app img {
+  max-width: 40px;
+  max-height: 40px;
   width: 40px;
   height: 40px;
   margin: auto 2px auto 2px;
 }
-.pick-a-thing.dialog button {
+.pick-a-thing.window-app button {
   display: flex;
   flex-direction: row;
   justify-content: left;
   padding: 0px;
   margin: 0px;
 }
-.pick-a-thing.dialog button span.item-name {
+.pick-a-thing.window-app button span.item-name {
   text-align: left;
   margin: auto;
   margin-left: 2%;
 }
-.pick-a-thing.dialog button span.dupe-id {
+.pick-a-thing.window-app button span.dupe-id {
   font-size: 0.7em;
   text-align: right;
   margin: auto;
   margin-right: 2%;
-  color: var(--color-cool-3);
+  color: var(--color-cool-3, #573fc0);
 }

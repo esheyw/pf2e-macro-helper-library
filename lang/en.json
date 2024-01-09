@@ -1,13 +1,25 @@
 {
   "MHL": {
+    "Grammar": {
+      "Articles": {
+        "An": "an",
+        "A": "a",
+        "The": "the"
+      }
+    },
     "PickAThing": {
       "Title": "Pick A Thing",
       "Error": {
         "ThingsFormat": "`things` must be an array of {name:,value:, img?:,identifier?:} objects.",
-        "MalformedThing": "Provided thing lacked valid name or value."
+        "MalformedThing": "Provided thing lacked valid label or value."
       }
     },
     "Macro": {
+      "DropHeldTorch": {
+        "Error": {
+          "ItemPilesDependency": "This macro requires the Item Piles module active in this world to function."
+        }
+      },
       "FascinatingPerformance": {
         "Error": {
           "MustHaveFeat": "Selected actor must have the Fascinating Performance feat.",
@@ -60,12 +72,18 @@
     },
     "Error": {
       "Generic": "You broke something.",
-      "BadErrorString": "Provided garbage string to error handler.",
+      "BannerType":"Banner type must be one of \"info\", \"warn\", or \"error\".",
+      "BadErrorString": "Provided non-string to error handler localizer.",
       "InvalidType": "Invalid type \"{type}\" provided.",
       "Type": {
-        "Folder": "{var} must be a Folder document or the ID of one.",
-        "Function": "{var} must be a Function."
+        "Folder": "\"{var}\" must be a Folder document or the ID of one.",
+        "Function": "\"{var}\" must be a Function.",
+        "Number": "\"{var}\" must be a Number.",
+        "String": "\"{var}\" must be a String."
       }
+    },
+    "Warning":{
+      "LevelOutOfBounds": "Provided level ({level}) out of bounds! Defaulting to level 25."
     },
     "Settings": {
       "NotifyOnError": {

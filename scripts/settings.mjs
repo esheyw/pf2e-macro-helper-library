@@ -1,5 +1,5 @@
 import { MODULE } from "./constants.mjs";
-import { localize } from "./helpers/helpers.mjs";
+import { localize } from "./helpers/stringHelpers.mjs";
 export function registerSettings() {
   game.settings.register(MODULE, "notify-on-error", {
     config: true,

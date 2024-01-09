@@ -1,12 +1,11 @@
-import { MHLError, localize } from "./helpers.mjs";
-import { NOTIFY } from "../constants.mjs"; // usually localizedError handles this, but infos aren't errors
+import { MHLError, localizedBanner } from "./errorHelpers.mjs";
 const PREFIX = `MHL.Target`;
-export function oneTargetOnly(user = game.user, useFirst = false) {
+export function oneTargetOnly(useFirst = false, user = game.user) {
   const targets = anyTargets(user);
   if (targets.size > 1) {
     // if it was 0 it got caught by anyTargets
     if (useFirst) {
-      if (NOTIFY) ui.notifications.info(localize(`${PREFIX}.Info.Fallback`, { name: targets.first().name }));
+      localizedBanner(`${PREFIX}.Info.Fallback`, { name: targets.first().name });
       return targets.first();
     }
     throw MHLError(`${PREFIX}.Error.NotOneTargetted`);

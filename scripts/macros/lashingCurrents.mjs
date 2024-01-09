@@ -1,8 +1,9 @@
 import { oneTokenOnly } from "../helpers/tokenHelpers.mjs";
-import { pickItemFromActor } from "../helpers/pickItemFromActor.mjs";
-import { MHLError } from "../helpers/helpers.mjs";
-const PREFIX = "MH.Macros.LashingCurrents";
+import { pickItemFromActor } from "../helpers/pf2eHelpers.mjs";
+import { MHLError } from "../helpers/errorHelpers.mjs";
+const PREFIX = "MHL.Macro.LashingCurrents";
 export async function lashingCurrents() {
+  const func = 'lashingCurrents: ';
   const token = oneTokenOnly();
   const actor = token.actor;
   const FORBIDDEN_RUNES = ["bloodbane", "kinWarding"];
@@ -24,7 +25,6 @@ export async function lashingCurrents() {
     },
   ];
   const existingLC = await pickItemFromActor(actor, {
-    // held: true,
     itemType: "weapon",
     otherFilter: (i) => i.system.rules.find((r) => r?.slug === "lashing-currents"),
     errorIfEmpty: false,
@@ -34,7 +34,7 @@ export async function lashingCurrents() {
       held: true,
       itemType: "weapon",
     });
-    if (!relicWeapon) throw MHLError(`${PREFIX}.Error.NoneSelected`);
+    if (!relicWeapon) throw MHLError(`${PREFIX}.Error.NoneSelected`, null, {func});
     rules.push({
       key: "Striking",
       selector: "lashing-currents-damage",

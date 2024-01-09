@@ -1,4 +1,5 @@
-import { MHLError, localize } from "../helpers/helpers.mjs";
+import { MHLError } from "../helpers/errorHelpers.mjs";
+import { localize } from "../helpers/stringHelpers.mjs";
 import { oneTokenOnly } from "../helpers/tokenHelpers.mjs";
 import { anyTargets } from "../helpers/targetHelpers.mjs";
 import { NOTIFY } from "../constants.mjs";

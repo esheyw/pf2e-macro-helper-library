@@ -1,4 +1,5 @@
-import { MHLError, localize } from "./helpers.mjs";
+import { MHLError } from "./errorHelpers.mjs";
+import { localize } from "./stringHelpers.mjs";
 const PREFIX = `MHL.Token`;
 export function oneTokenOnly(fallback = true) {
   const tokens = anyTokens(fallback);

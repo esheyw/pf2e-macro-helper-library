@@ -1,5 +1,5 @@
 import { oneTokenOnly } from "../helpers/tokenHelpers.mjs";
-import { MHLError } from "../helpers/helpers.mjs";
+import { MHLError } from "../helpers/errorHelpers.mjs";
 export async function recoverOldLashingCurrents() {
   const token = oneTokenOnly();
   const actor = token.actor;

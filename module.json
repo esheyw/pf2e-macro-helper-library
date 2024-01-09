@@ -1,7 +1,6 @@
 {
   "id": "pf2e-macro-helper-library",
-  "title": "PF2e Macro Helper Library",
-  "version": "0.1",
+  "title": "PF2e Macro & Helper Library",
   "compatibility": {
     "minimum": "11",
     "verified": "11.315"
@@ -42,6 +41,7 @@
       "paths": ["lang", "styles", "templates"]
     }
   },
+  "version": "0.1",
   "manifest": "updatedByRelease",
   "url": "updatedByRelease",
   "download": "updatedByRelease"

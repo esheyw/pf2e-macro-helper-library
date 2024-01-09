@@ -1,7 +1,10 @@
 import { oneTokenOnly } from "../helpers/tokenHelpers.mjs";
+import { MHLError } from "../helpers/errorHelpers.mjs";
+const PREFIX = 'MHL.Macros.DropHeldTorch';
 export async function dropHeldTorch() {
   //Check for exactly one selected token
   const token = oneTokenOnly();
+  if (!game.modules.get('item-piles')?.active) throw MHLError(`${PREFIX}.Error.ItemPilesDependency`);
   const held = token.actor.items.filter(i => i.carryType === 'held');
   //eventually want this to be a select held item dialog, hardcoding to Torch for now)
   const [torch] = held.filter(i => i.name === 'Torch');
@@ -36,12 +39,12 @@ export async function dropHeldTorch() {
     }    
   }  
   const aOverrides = {
-    "img": "Assets/icons/painterly/haste-fire-3.png"
+    // "img": "Assets/icons/painterly/haste-fire-3.png"
   }
   const tOverrides = {
     "texture.scaleX": 0.5,
     "texture.scaleY": 0.5,
-    "texture.src": "Assets/icons/painterly/haste-fire-3.png",
+    // "texture.src": "Assets/icons/painterly/haste-fire-3.png",
     "light": lightupdate,
     "flags.pf2e.linkToActorSize": false,
     "flags.pf2e.autoscale": false,
