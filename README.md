@@ -17,7 +17,9 @@ Requires one token only selected, and a currently held torch. Creates an Item Pi
 Helpers are accessed via `game.pf2emhl.`
 ### Token and Target helpers
 These are mostly replacing one-liners, but I got tired of typing out all my error handling for this stuff every time.
-`oneTokenOnly(fallback = true)`  
+```js
+oneTokenOnly(fallback = true)
+```  
 Returns a single token placeable, or errors if more than one. If `fallback` is `true` (default), will attempt to find a token of the user's assigned character on the current scene if no others selected.
 #### `anyTokens(fallback = true)`
 Returns an array of selected token placeables, erroring if none selected, unless `fallback` is `true`, as above.
