@@ -25,7 +25,8 @@ Returns a single token placeable, or errors if more than one. If `fallback` is `
 Returns an array of selected token placeables, erroring if none selected, unless `fallback` is `true`, as above.
 #### `oneTargetOnly(useFirst = false, user = game.user)`  
 Returns a single token placeable, targetted by the specified user (defaulting to the user running the macro). Errors if user has no targets, or more than one target. Can override the latter behaviour with the `useFirst` parameter, which will suppress errors for >1 target and simply return the first target of the given user.
-#### `anyTargets(user = game.user)`  
+#### `anyTargets(user = game.user)`
+
 Returns an array of token placeables, targetted by the specified user, as above. Errors if no targets found.
 
 ---
