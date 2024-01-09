@@ -1,4 +1,3 @@
-import { getIDsFromFolder } from "./otherHelpers.mjs";
 import { fu } from "../constants.mjs";
 import { MHLError } from "./errorHelpers.mjs";
 import { prependIndefiniteArticle, capitalize } from "./stringHelpers.mjs";
