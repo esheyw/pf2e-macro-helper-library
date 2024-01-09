@@ -4,22 +4,20 @@ It is a collection of macros and helper functions I've written for PF2e. It will
 
 ## Existing Macros:
 Macros are accessed via `game.pf2emhl.macros.`
-###### Fascinating Performance (`async fascinatingPerformance()`)
+##### Fascinating Performance (`async fascinatingPerformance()`)
 Requires one token selected, and at least one target. Has handling for target limits depending on Performance rank, and will ignore any targets with an effect that contains both "Immun" and "Fascinating Performance" in its name, case-**in**sensitive. TODO: Build immunity effect, apply as appropriate (existing behaviour is a holdover from standalone macro)
-#### Lashing Currents (`async lashingCurrents()`)
+##### Lashing Currents (`async lashingCurrents()`)
 Implements the Relic Gift of the same name. Prompts the user to select a weapon, and adds a Strike RE and attendant WeaponPotency, Striking, and AdjustStrike rules to mirror the weapon's property runes. Run again on the same actor to remove the rules. Does not prevent you from using the weapon's base strike while active; No practical way to do that without being more destructive.
-#### Recover Old Lashing Currents (`async recoverOldLashingCurrents()`)
+##### Recover Old Lashing Currents (`async recoverOldLashingCurrents()`)
 For recovering weapons hidden in flags by the old Lashing Currents macro originally shipped with the PF2e Relics module.
-#### Drop Held Torch (`async dropHeldTorch()`) *Requires Item Piles*
+##### Drop Held Torch (`async dropHeldTorch()`) *Requires Item Piles*
 Requires one token only selected, and a currently held torch. Creates an Item Pile containing the torch, removing it from the actor. If the torch was lit, apply that light to the resulting pile token. Significant generalization and improvements planned.
 
 ## Existing Helper Functions:
 Helpers are accessed via `game.pf2emhl.`
 ### Token and Target helpers
 These are mostly replacing one-liners, but I got tired of typing out all my error handling for this stuff every time.
-```js
-oneTokenOnly(fallback = true)
-```  
+#### oneTokenOnly(fallback = true)
 Returns a single token placeable, or errors if more than one. If `fallback` is `true` (default), will attempt to find a token of the user's assigned character on the current scene if no others selected.
 #### `anyTokens(fallback = true)`
 Returns an array of selected token placeables, erroring if none selected, unless `fallback` is `true`, as above.
@@ -76,7 +74,7 @@ Takes a folder (Document or ID) in `root`, and returns a flattened array of ids 
 Takes `root` as above, and a Document (or any object with an `ownership` property) in `exemplar`, and applies the latters ownership data to every document in the folder structure. Doesn't handle documents/folders in compendia. Be careful, as once an ownership level has been set for a particular user, it can not be reset to inherit via this method, and will need to be explicitly downgraded if so desired.
 #### `async pickAThingDialog({ things = null, title = null, thingType = "Item", dialogOptions = {} } = {})`
 Provides a dialog to pick from a list of choices. Merges provided `dialogOptions` with its defaults (`{ jQuery: false, classes: ["pick-a-thing"] }`). `title` defaults to `Pick a[n] {thingType}` if not provided. `things` must be an array of objects that look like: 
-```
+```js
 {
   label: <string>,
   value: <string>,
