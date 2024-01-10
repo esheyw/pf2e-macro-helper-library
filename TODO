@@ -1,2 +1,4 @@
 - fix token settings on dropHeldTorch
 - brushup the group initiative skills dialog macro
+- foundry package release api
+- npm package setup, run link dev

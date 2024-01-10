@@ -14,6 +14,11 @@
         "MalformedThing": "Provided thing lacked valid label or value."
       }
     },
+    "Dialog" : {
+      "Error": {
+        "TemplateFailure": "The template filepath or literal passed to MHLDialog failed to compile properly."
+      }
+    },
     "Macro": {
       "DropHeldTorch": {
         "Error": {

@@ -1,0 +1,18 @@
+<form>
+    <div class="form-group">
+        <label for="mhdialog-{{@root.appId}}-all">All</label>
+        <select id="mhdialog-{{@root.appId}}-all" name="all">
+            {{selectOptions uskills nameAttr="slug" labelAttr="label" sort=true blank="-" localize="true"}}
+        </select>
+    </div>
+    <hr />
+    {{#each tokens as |token|}}
+        <div class="form-group">
+            <label for="mhdialog-{{@root.appId}}-{{token.id}}">{{token.name}}</label>
+            <select id="mhdialog-{{@root.appId}}-{{token.id}}" name="{{token.id}}">
+                <option value="perception" selected>Perception</option>
+                {{selectOptions token.skills nameAttr="slug" labelAttr="label" sort="true"}}
+            </select>
+        </div>
+    {{/each}}
+</form>

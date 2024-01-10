@@ -1,4 +1,4 @@
-import { localize } from "../helpers/helpers.mjs";
+import { localize } from "../helpers/stringHelpers.mjs";
 const PREFIX='MHL.PickAThing';
 export class PickAThingPrompt extends Application {
   constructor(data) {

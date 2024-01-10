@@ -14,7 +14,7 @@ export function levelBasedDC(level) {
   ];
   let DC = 0;
   if (level >= DCByLevel.length || level < -1) {
-    localizedBanner(`${PREFIX}.Warning.LevelOutOfBounds`, {level}, {prefix: func, type: 'warn'});
+    localizedBanner(`${PREFIX}.Warning.LevelOutOfBounds`, { level }, { prefix: func, type: "warn" });
     level = 26;
   }
   if (level === -1) {
@@ -88,7 +88,6 @@ export async function pickItemFromActor(
   return actor.items.get(response);
 }
 
-
 // types: [all, action, bestiary, campaignFeature, equipment, feat, hazard, spell] (compendium browser divisions + 'all')
 //        if you need to find effects like this, too bad I guess
 // fields: document fields required to index for provided filter
@@ -96,7 +95,11 @@ export async function pickItemFromActor(
 // strictSourcing: if true, will suppress documents with missing source information, if false they're let through
 // fetch: if true, return full documents instead of the filtered index
 export async function getAllFromAllowedPacks({
-  type = "equipment", fields = [], filter = null, strictSourcing = true, fetch = false,
+  type = "equipment",
+  fields = [],
+  filter = null,
+  strictSourcing = true,
+  fetch = false,
 } = {}) {
   const PREFIX = "MHL.GetAllFromAllowedPacks";
   const func = "getAllFromAllowedPacks";
@@ -124,18 +127,20 @@ export async function getAllFromAllowedPacks({
   if (!Object.keys(browser.packLoader.sourcesSettings.sources).length) {
     await browser.packLoader.updateSources(browser.loadedPacksAll());
   }
-  const packList = type === "all"
-    ? Object.values(browser.settings).flatMap((t) => Object.entries(t))
-    : Object.entries(browser.settings[type]);
+  const packList =
+    type === "all"
+      ? Object.values(browser.settings).flatMap((t) => Object.entries(t))
+      : Object.entries(browser.settings[type]);
 
   const loadablePacks = packList.filter(([_, p]) => p.load).map(([pack]) => pack);
   const unloadablePacks = packList.filter(([_, p]) => !p.load).map(([pack]) => pack);
   const sources = browser.packLoader.sourcesSettings.sources;
   const loadableSources = Object.values(sources)
     .filter((s) => s.load)
-    .map((s) => s.name.slugify({
-      strict: true,
-    })
+    .map((s) =>
+      s.name.slugify({
+        strict: true,
+      })
     );
   fields.push("system.details.publication", "system.publication", "system.source", "system.details.source");
 
@@ -180,4 +185,3 @@ export async function getAllFromAllowedPacks({
   }
   return out;
 }
-

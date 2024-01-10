@@ -60,9 +60,9 @@ export async function lashingCurrents() {
     const oldRules = existingLC.system.rules.filter(
       (r) =>
         !(
-          r.selector?.includes("lashing-currents") ||
-          r.definition?.[0]?.includes("lashing-currents") ||
-          r.slug === "lashing-currents"
+          r?.selector?.includes("lashing-currents") ||
+          r?.definition?.[0]?.includes("lashing-currents") ||
+          r?.slug === "lashing-currents"
         )
     );
     await existingLC.update({ "system.rules": oldRules });
