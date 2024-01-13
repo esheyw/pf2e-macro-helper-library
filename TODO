@@ -1,4 +1,9 @@
 - fix token settings on dropHeldTorch
 - brushup the group initiative skills dialog macro
+  - implement current column
 - foundry package release api
 - npm package setup, run link dev
+- - or just a standalone script
+- dupe check contentData in MHLDialog against reserved keys
+- add submit validation callback to MHLDialog
+- document MHLDialog

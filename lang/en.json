@@ -16,7 +16,8 @@
     },
     "Dialog" : {
       "Error": {
-        "TemplateFailure": "The template filepath or literal passed to MHLDialog failed to compile properly."
+        "TemplateFailure": "The template filepath or literal passed to MHLDialog failed to compile properly.",
+        "FormRequiresName": "One or more of the forms provided lacks a `name` property."
       }
     },
     "Macro": {

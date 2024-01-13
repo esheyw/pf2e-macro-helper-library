@@ -1,16 +1,18 @@
 import { anyTokens } from "../helpers/tokenHelpers.mjs";
 import { setInitiativeStatistic } from "../helpers/pf2eHelpers.mjs";
 import { MHLDialog } from "../classes/MHLDialog.mjs";
-import { MODULE } from "../constants.mjs";
+import { MODULE, fu } from "../constants.mjs";
 
 export async function updateInitiativeSkillsDialog() {
-  const tokens = anyTokens().filter(t=>(!t.actor.traits.has('minion') && ['character', 'npc'].includes(t.actor.type)));
+  const tokens = anyTokens().filter(
+    (t) => !t.actor.traits.has("minion") && ["character", "npc"].includes(t.actor.type)
+  );
   async function submitCallback(html) {
-    const { all, ...data } = new FormDataExtended(html[0].querySelector("form")).object;
+    const { all, ...data } = new FormDataExtended(html.querySelector("form")).object;
     if (all) {
       for (const id of Object.keys(data)) {
         let actor = fromUuidSync(id)?.actor;
-        await setInitiativeStatistic(actor, skill);
+        await setInitiativeStatistic(actor, all);
       }
     } else {
       for (const [id, skill] of Object.entries(data)) {
@@ -24,7 +26,8 @@ export async function updateInitiativeSkillsDialog() {
     tokens: tokens.map((t) => ({
       name: t.name,
       id: t.document.uuid,
-      skills: t.actor.skills,
+      skills: fu.mergeObject(t.actor.skills, { perception: { slug: "perception", label: "PF2E.PerceptionLabel" } }),
+      current: t.actor.system.initiative.statistic,
     })),
   };
   contentData.uskills.unshift(["perception", "PF2E.PerceptionLabel"]);

@@ -63,4 +63,3 @@ export async function pickAThingDialog({ things = null, title = null, thingType 
   };
   return await Dialog.wait(dialogData, dialogOptions);
 }
-
