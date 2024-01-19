@@ -13,8 +13,9 @@ export function oneTargetOnly(useFirst = false, user = game.user) {
   return targets.first();
 }
 export function anyTargets(user = game.user) {
+  if (typeof user === 'string') user = game.users.get(user) ?? game.users.getName(user);
   if (!(user instanceof User)) {
-    throw MHLError(`MHL.User.Error.NotAUser`, null, { log: { user } });
+    throw MHLError(`MHL.Error.Type.User`, {var:'user'}, { log: { user } });
   }
   if (user.targets.size === 0) {
     throw MHLError(`${PREFIX}.Error.NotAnyTargetted`);

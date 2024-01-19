@@ -10,3 +10,4 @@ export function registerSettings() {
     type: Boolean,
   });
 }
+export const NOTIFY = () => game.settings.get(MODULE, 'notify-on-error');

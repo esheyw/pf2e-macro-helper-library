@@ -1,9 +1,9 @@
 import { oneTokenOnly } from "../helpers/tokenHelpers.mjs";
 import { pickItemFromActor } from "../helpers/pf2eHelpers.mjs";
-import { MHLError } from "../helpers/errorHelpers.mjs";
+import { MHLError, localizedBanner } from "../helpers/errorHelpers.mjs";
 const PREFIX = "MHL.Macro.LashingCurrents";
 export async function lashingCurrents() {
-  const func = 'lashingCurrents: ';
+  const func = "lashingCurrents: ";
   const token = oneTokenOnly();
   const actor = token.actor;
   const FORBIDDEN_RUNES = ["bloodbane", "kinWarding"];
@@ -22,6 +22,7 @@ export async function lashingCurrents() {
       label: "Lashing Currents",
       group: "flail",
       traits: ["disarm", "finesse", "reach-10", "trip", "versatile-s"],
+      img: "icons/magic/water/waves-water-blue.webp",
     },
   ];
   const existingLC = await pickItemFromActor(actor, {
@@ -34,7 +35,7 @@ export async function lashingCurrents() {
       held: true,
       itemType: "weapon",
     });
-    if (!relicWeapon) throw MHLError(`${PREFIX}.Error.NoneSelected`, null, {func});
+    if (!relicWeapon) throw MHLError(`${PREFIX}.Error.NoneSelected`, null, { func });
     rules.push({
       key: "Striking",
       selector: "lashing-currents-damage",
@@ -56,7 +57,7 @@ export async function lashingCurrents() {
       });
     }
     await relicWeapon.update({ "system.rules": rules.concat(relicWeapon.system.rules) });
-  } else {
+  } else {    
     const oldRules = existingLC.system.rules.filter(
       (r) =>
         !(
@@ -66,5 +67,6 @@ export async function lashingCurrents() {
         )
     );
     await existingLC.update({ "system.rules": oldRules });
+    localizedBanner(`${PREFIX}.Info.Removing`, {name: existingLC.name});
   }
 }

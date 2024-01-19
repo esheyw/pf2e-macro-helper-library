@@ -4,7 +4,7 @@ It is a collection of macros and helper functions I've written for PF2e. It will
 
 [Patch Notes](https://github.com/esheyw/pf2e-macro-helper-library/blob/main/CHANGELOG.md)
 
-## Existing Macros:
+## Macros
 Macros are accessed via `game.pf2emhl.macros.`
 #### Fascinating Performance (`async fascinatingPerformance()`)
 Requires one token selected, and at least one target. Has handling for target limits depending on Performance rank, and will ignore any targets with an effect that contains both "Immun" and "Fascinating Performance" in its name, case-**in**sensitive. TODO: Build immunity effect, apply as appropriate (existing behaviour is a holdover from standalone macro)
@@ -15,7 +15,7 @@ For recovering weapons hidden in flags by the old Lashing Currents macro origina
 #### Drop Held Torch (`async dropHeldTorch()`) *Requires Item Piles*  
 Requires one token only selected, and a currently held torch. Creates an Item Pile containing the torch, removing it from the actor. If the torch was lit, apply that light to the resulting pile token. Significant generalization and improvements planned.
 
-## Existing Helper Functions:
+## Helper Functions
 Helpers are accessed via `game.pf2emhl.`
 
 ---
@@ -97,3 +97,46 @@ Example image (produced via pickItemFromActor above):
 
 The purple text is the `indentifier`, which can be supplied to disambiguated things with duplicate names. Currently produces a single button per provided `thing`, regardless of thing count. 
 **TODO**: implement select menu fallback for > configurable limit of items, improve styling generally.
+
+---
+## Classes
+### `MHLDialog`
+MHLDialog is designed to be a drop-in replacement for the foundry Dialog class, with a few improvements:
+#### Defaults to `jQuery:false` in options
+This is mostly personal preference, but it means that any callbacks you use with this class should assume they will be passed an HTMLElement instead of a jQuery object, unless you specify `jQuery:true` in your dialog options object.
+#### Doesn't clobber the classes array
+In base Dialog, the way Application handles merging the options object, if you specify `classes:["my-class"]` as part of your dialog options, it will overwrite the array entirely, removing the `"dialog"` class. MHLDialog includes a workaround for this, and adds its own class (`"mhldialog"`) to the list in addition to whatever you give it.
+#### Handlebars as `content`
+Supports passing either a path to a handlebars file (must have extension `.html` or `.hbs`), or an inline handlebars template string, as `content` in dialog data. The temlpate is compiled and then passed the contents of the `contentData` property, in addition to the `buttons` and `content` variables that the base class provides, as well as the `idPrefix` variable, which is set to `mhldialog-${this.appId}-`. This last allows [valid-by-html-rules](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id) `id` properties on your form inputs, and associated labels, eg:
+```hbs
+<form>
+  <div class="form-group">
+    <label for="{{idPrefix}}text">Input Text: </label>
+    <div class="form-fields">
+      <input type="text" name="text" id="{{idPrefix}}text"/>
+    </div>
+  </div>
+</form>
+```
+#### Restricting form submission (required fields)
+Supports passing a `validator` property along with the dialog data. This can either be:
+- A function (that takes the root element (respecting the `jQuery` option, which MHLDialog defaults to `false`) of the dialog and returns a boolean)
+- An array of strings equating to the `name`s of form elements that are not allowed to be empty
+- A single string `name` (gets put into an array and treated as above)
+If passed either non-function option, the default validator will produce a banner if validation is failed: ![](https://i.imgur.com/EfbNTWE.png)
+
+#### Static methods `MHLDialog.getFormData(html)` and `MHLDialog.getFormData(html)`
+`getFormsData` takes in html (or jQuery), and, for each form in the data, runs that form through `new FormDataExtended`, and assigns the output to an object, with the key of the form's name, eg:
+```js
+{
+  "formname1": {
+    "fieldname1":"value",
+    "fieldname2":"value"
+  },
+  "formname2":{
+    //etc
+  }
+}
+```
+If there is more than one form in `html`, and any forms lack a `name` attribute, will error. If there's only one form, if that form lacks a `name` attribute it will be default to just 'form'.
+`getFormData` just calls `getFormsData` and returns the first form's data; the only difference between it and simple `(html) => new FormDataExtended(html).object` is `getFormsData`'s handling for multiple forms. Either function is suitable as a callback if you'd like to simple dump the form output and handle that separately (my preference over having all the logic in the callback).

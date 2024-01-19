@@ -1,6 +1,7 @@
 import { fu } from "../constants.mjs";
 import { MHLError } from "./errorHelpers.mjs";
 import { prependIndefiniteArticle, capitalize } from "./stringHelpers.mjs";
+import { MHLDialog } from "../classes/MHLDialog.mjs";
 
 //root: root folder of the structure to update
 //exemplar: document to copy ownership structure of
@@ -48,18 +49,12 @@ export async function pickAThingDialog({ things = null, title = null, thingType 
     acc[curr.value] = { label: buttonLabel };
     return acc;
   }, {});
-  dialogOptions = fu.mergeObject(
-    {
-      jQuery: false,
-      classes: ["pick-a-thing"],
-    },
-    dialogOptions
-  );
+  dialogOptions.classes ??= [];
+  dialogOptions.classes.push('pick-a-thing')
   const dialogData = {
     title: title ?? `Pick ${prependIndefiniteArticle(capitalize(thingType) ?? "Thing")}`,
-    // content: dialogStyle,
     buttons,
     close: () => false,
   };
-  return await Dialog.wait(dialogData, dialogOptions);
+  return await MHLDialog.wait(dialogData, dialogOptions);
 }

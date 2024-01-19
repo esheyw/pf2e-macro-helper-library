@@ -102,7 +102,7 @@ export async function getAllFromAllowedPacks({
   fetch = false,
 } = {}) {
   const PREFIX = "MHL.GetAllFromAllowedPacks";
-  const func = "getAllFromAllowedPacks";
+  const func = "getAllFromAllowedPacks: ";
   const browser = game.pf2e.compendiumBrowser;
   const validTypes = Object.keys(browser.settings);
   validTypes.push("all");
@@ -176,6 +176,7 @@ export async function getAllFromAllowedPacks({
     if (fetch) {
       out.push(
         ...(await pack.getDocuments({
+          //secret getDocuments query syntax {prop}__in:
           _id__in: filteredDocs.map((d) => d._id),
         }))
       );
@@ -184,4 +185,21 @@ export async function getAllFromAllowedPacks({
     }
   }
   return out;
+}
+//TODO: Generalize before marking for export
+function generateTraitsFlavour(traits = []) {
+  if (!Array.isArray(traits)) {
+    throw MHLError(
+      `MHL.Error.Type.Array`,
+      { var: "traits", typestr: " of trait slug strings" },
+      { func: "generateTraitsFlavour: ", log: { traits } }
+    );
+  }
+  return traits
+    .map((tag) => {
+      const label = game.i18n.localize(CONFIG.PF2E.actionTraits[tag]);
+      const tooltip = CONFIG.PF2E.traitsDescriptions[tag];
+      return `<span class="tag" data-trait="${tag}" data-tooltip="${tooltip}">${label}</span>`;
+    })
+    .join("");
 }

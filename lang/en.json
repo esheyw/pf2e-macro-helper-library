@@ -14,10 +14,15 @@
         "MalformedThing": "Provided thing lacked valid label or value."
       }
     },
-    "Dialog" : {
+    "Dialog": {
+      "Warning": {
+        "RequiredFields":"This dialog requires one or more fields to be non-empty: {fields}"
+      },
       "Error": {
         "TemplateFailure": "The template filepath or literal passed to MHLDialog failed to compile properly.",
-        "FormRequiresName": "One or more of the forms provided lacks a `name` property."
+        "FormRequiresName": "One or more of the forms provided lacks a `name` property.",
+        "ReservedKeys":"The contentData object must not contain any of the following reserved keys: {keys}",
+        "BadValidator":"The supplied validator must either be a function or an array of value names required to be non-empty."
       }
     },
     "Macro": {
@@ -39,6 +44,9 @@
         }
       },
       "LashingCurrents": {
+        "Info": {
+          "Removing": "Removing Lashing Currents rules from \"{name}\"."
+        },
         "Error": {
           "NoneSelected": "No weapon selected.",
           "NoExistingFound": "No old-style Lashing Currents weapon found on the actor of selected token \"{name}\"."
@@ -76,19 +84,21 @@
         "NotAUser": "Provided user was not a foundry User."
       }
     },
-    "Error": {
+    "Error": {      
       "Generic": "You broke something.",
-      "BannerType":"Banner type must be one of \"info\", \"warn\", or \"error\".",
-      "BadErrorString": "Provided non-string to error handler localizer.",
+      "BannerType": "Banner type must be one of \"info\", \"warn\", or \"error\".",
+      "LogType": "Log type must be one of \"debug\", \"info\", \"warn\", or \"error\".",
       "InvalidType": "Invalid type \"{type}\" provided.",
       "Type": {
+        "Array": "\"{var}\" must be an Array{typestr}.", 
+        "User": "\"{var}\" must be a User or the ID of one.",
         "Folder": "\"{var}\" must be a Folder document or the ID of one.",
         "Function": "\"{var}\" must be a Function.",
         "Number": "\"{var}\" must be a Number.",
         "String": "\"{var}\" must be a String."
       }
     },
-    "Warning":{
+    "Warning": {
       "LevelOutOfBounds": "Provided level ({level}) out of bounds! Defaulting to level 25."
     },
     "Settings": {
