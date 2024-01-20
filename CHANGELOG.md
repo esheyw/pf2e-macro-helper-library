@@ -19,3 +19,5 @@
 - add `updateInitiativeSkillsDialog()` macro
 - add `MHDialog` class
 - various tidyup
+- add `isEmpty()` helper
+- add `log` and `mhlog` helpers

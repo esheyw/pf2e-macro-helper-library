@@ -50,7 +50,18 @@ Returns an `Error` with the message having been passed through `localize()` as a
 Localizes `str` with `data`, preprends `prefix`, and calls `ui.notifications[type]` with the result and `console`. Errors if `type` is not `info`, `warn`, or `error`. If `notify` is nullish, falls back on the module setting, as above. If `log` is provided and is an object, it will be passed to `console[type]()`. `notify` functions as above.
 #### `MHLError(str, data = {}, { notify = null, prefix = "MacroHelperLibrary: ", log = {}, func = null } = {})`  
 A simple wrapper on `localizedError` above, pre-fills the prefix for this library's calls, and provides the `func` variable which, if provided, is inserted between the prefix and the rest of the error string, for more a more granular 'where did this error come from' report.
-
+#### `isEmpty(value)`
+Checks if value is empty. Deep-checks arrays and objects.
+```js
+isEmpty([]) == true
+isEmpty({}) == true
+isEmpty([{0:false},"",0]) == true
+isEmpty({0:1}) == false
+```
+#### `log(loggable, type = null, prefix = null)`
+Passes `loggable` to `console[type]()`, with `prefix` as a separate argument first for ease of console filtering.
+#### `mhlog(loggable, type = null, prefix="MHL |") `
+Simple wrapper on the above with a set prefix.
 ---
 ### PF2e-specific Helpers
 #### `levelBasedDC(level)`  
