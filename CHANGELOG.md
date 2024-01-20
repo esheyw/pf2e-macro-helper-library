@@ -15,6 +15,7 @@
 - add some debug to `applyOwnershipToFolderStructure()`
 - fixed data path in `setInitiativeStatistic()`
 
-## Release 0.1.4
+## Release 0.2.0
 - add `updateInitiativeSkillsDialog()` macro
 - add `MHDialog` class
+- various tidyup

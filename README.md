@@ -124,7 +124,6 @@ Supports passing a `validator` property along with the dialog data. This can eit
 - An array of strings equating to the `name`s of form elements that are not allowed to be empty
 - A single string `name` (gets put into an array and treated as above)
 If passed either non-function option, the default validator will produce a banner if validation is failed: ![](https://i.imgur.com/EfbNTWE.png)
-
 #### Static methods `MHLDialog.getFormData(html)` and `MHLDialog.getFormData(html)`
 `getFormsData` takes in html (or jQuery), and, for each form in the data, runs that form through `new FormDataExtended`, and assigns the output to an object, with the key of the form's name, eg:
 ```js
@@ -140,3 +139,15 @@ If passed either non-function option, the default validator will produce a banne
 ```
 If there is more than one form in `html`, and any forms lack a `name` attribute, will error. If there's only one form, if that form lacks a `name` attribute it will be default to just 'form'.
 `getFormData` just calls `getFormsData` and returns the first form's data; the only difference between it and simple `(html) => new FormDataExtended(html).object` is `getFormsData`'s handling for multiple forms. Either function is suitable as a callback if you'd like to simple dump the form output and handle that separately (my preference over having all the logic in the callback).
+#### Static method `getLabelMap(html)`
+As above, takes html/jQuery, returns an object of all valid name/label pairs. That is, for:
+- `<label>`s with valid `for` attributes that point to something that has an `id` matching the `for`, *and* a `name`, and
+- `<label>`s containing a labelable element (`button`, `input`, `meter`, `output`, `progress`, `select`, `textarea`) that have a `name`,
+it will produce an object like: 
+```js
+{
+  "name1":"Label for input name1",
+  //etc
+}
+```
+label text is acquired via `.innerText`, so may require trimming before use.
