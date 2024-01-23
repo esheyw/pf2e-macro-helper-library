@@ -24,3 +24,10 @@
 
 ## Version 0.2.1
 - fix changelog
+
+## Version 0.2.2
+- switch to SASS for styling
+  - add SASS compilation to github actions
+- remove `isEmpty` helper, I didn't realize there was already one in `foundry.utils`
+- implement new version of updateInitiativeStatistics
+- document updateInitiativeStatistics

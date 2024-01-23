@@ -1,5 +1,5 @@
 import { COLOURS, LABELABLE_TAGS, fu } from "../constants.mjs";
-import { MHLError, isEmpty, localizedBanner } from "../helpers/errorHelpers.mjs";
+import { MHLError, localizedBanner } from "../helpers/errorHelpers.mjs";
 import { localize } from "../helpers/stringHelpers.mjs";
 const PREFIX = "MHL.Dialog";
 export class MHLDialog extends Dialog {
@@ -17,7 +17,7 @@ export class MHLDialog extends Dialog {
             const fields = fu.deepClone(validator);
             data.validator = (html) => {
               const formValues = MHLDialog.getFormData(html);
-              const emptyFields = fields.filter((f) => isEmpty(formValues[f]));
+              const emptyFields = fields.filter((f) => fu.isEmpty(formValues[f]));
               if (emptyFields.length) {
                 const fieldsError = fields
                   .map((f) =>
