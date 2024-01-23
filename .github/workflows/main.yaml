@@ -20,6 +20,7 @@ jobs:
           # Path(s) compiled CSS should be saved, eg. ~/workspace_sass/assets/css/main.css
           destination: styles/main.css
           sourceMap: true
+          outFile: styles/main.css
 
       # Substitute the Manifest and Download URLs in the module.json
       - name: Substitute Manifest and Download Links For Versioned Ones
@@ -34,7 +35,7 @@ jobs:
           download: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/module.zip
 
       # Create a zip file with all files required by the module to add to the release
-      - run: zip -r ./module.zip module.json LICENSE styles/ scripts/ templates/ lang/
+      - run: zip -r ./module.zip module.json LICENSE styles/*.css styles/*.map scripts/ templates/ lang/
 
       # Create a release for this specific version
       - name: Update Release with Files

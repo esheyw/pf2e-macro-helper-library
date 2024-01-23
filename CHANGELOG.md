@@ -35,3 +35,6 @@
 ## Version 0.2.3
 - fix imports in macros/index.mjs
 - update workflow again?
+
+## Version 0.2.4
+Update
