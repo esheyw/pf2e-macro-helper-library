@@ -38,3 +38,7 @@
 
 ## Version 0.2.4
 - update workflow again again
+
+## Version 0.2.5
+- become npm package, write own simple sass compile job
+- it works! release finally.
