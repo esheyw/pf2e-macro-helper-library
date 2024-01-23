@@ -19,8 +19,7 @@ jobs:
           source: styles/main.scss
           # Path(s) compiled CSS should be saved, eg. ~/workspace_sass/assets/css/main.css
           destination: styles/main.css
-          sourceMap: true
-          outFile: styles/main.css
+          sourceMap: styles/main.css.map
 
       # Substitute the Manifest and Download URLs in the module.json
       - name: Substitute Manifest and Download Links For Versioned Ones
