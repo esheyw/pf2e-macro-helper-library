@@ -31,3 +31,7 @@
 - remove `isEmpty` helper, I didn't realize there was already one in `foundry.utils`
 - implement new version of updateInitiativeStatistics
 - document updateInitiativeStatistics
+
+## Version 0.2.3
+- fix imports in macros/index.mjs
+- update workflow again?
