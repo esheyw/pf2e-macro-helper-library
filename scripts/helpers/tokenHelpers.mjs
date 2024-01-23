@@ -25,4 +25,3 @@ export function anyTokens(fallback = true) {
   }
   return canvas.tokens.controlled;
 }
-

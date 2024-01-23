@@ -1,5 +1,5 @@
 import { COLOURS, LABELABLE_TAGS, fu } from "../constants.mjs";
-import { MHLError, isEmpty, localizedBanner, mhlog } from "../helpers/errorHelpers.mjs";
+import { MHLError, isEmpty, localizedBanner } from "../helpers/errorHelpers.mjs";
 import { localize } from "../helpers/stringHelpers.mjs";
 const PREFIX = "MHL.Dialog";
 export class MHLDialog extends Dialog {
@@ -124,19 +124,19 @@ export class MHLDialog extends Dialog {
     const named = html.querySelectorAll("[name][id]");
     if (!named.length) return {};
     const namedIDs = Array.from(named).map((e) => e.getAttribute("id"));
-    const allLabels = Array.from(html.querySelectorAll('label'));    
+    const allLabels = Array.from(html.querySelectorAll("label"));
     if (!allLabels.length) return {};
     return allLabels.reduce((acc, curr) => {
-      const forAttr = curr.getAttribute("for");      
+      const forAttr = curr.getAttribute("for");
       if (forAttr) {
         if (!namedIDs.includes(forAttr)) return acc;
-        acc[curr.getAttribute('name')] = curr.innerText;
+        acc[curr.getAttribute("name")] = curr.innerText;
       } else {
-        const labelableChild = curr.querySelector(LABELABLE_TAGS.map(t=>`${t}[name]`).join(', '));
+        const labelableChild = curr.querySelector(LABELABLE_TAGS.map((t) => `${t}[name]`).join(", "));
         if (!labelableChild) return acc;
-        acc[labelableChild.getAttribute('name')] = curr.innerText;
+        acc[labelableChild.getAttribute("name")] = curr.innerText;
       }
-      return acc;    
+      return acc;
     }, {});
   }
 }

@@ -16,4 +16,10 @@ Hooks.on("init", () => {
     globalThis.mh = game.pf2emhl;
   }
   registerSettings();
+
+  Handlebars.registerHelper("mhlocalize", (value, options) => {
+    if ( value instanceof Handlebars.SafeString ) value = value.toString();
+    const data = options.hash;
+    return helpers.localize(value,data)
+  });
 });

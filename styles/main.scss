@@ -1,0 +1,44 @@
+:root {
+  --mhl-frame-color-1: var(--color-primary-1, var(--color-bg-trait));
+  --mhl-frame-color-2: var(--color-primary-2, var(--color-pf-primary-light));
+  --mhl-text-header-color: var(--text-dark);
+  [data-theme^="crb-light"],
+  [data-theme^="no-theme"],
+  [data-theme^="discord-light"],
+  [data-theme^="custom-light"] {
+    --mhl-text-header-color: var(--text-dark);
+  }
+  [data-theme^="crb-dark"],
+  [data-theme^="foundry2"],
+  [data-theme^="bg3"],
+  [data-theme^="discord-dark"],
+  [data-theme^="custom-dark"] {
+    --mhl-text-header-color: var(--text-color-1, var(--text-dark));
+  }
+
+  [disabled] {
+    cursor: not-allowed;
+  }
+}
+div.section-separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    border-style: solid;
+    border-color: var(--mhl-frame-color-1);
+    border-width: 0 0 1px 0;
+  }
+  &:not(:empty)::before {
+    margin-right: 0.25em;
+  }
+  &:not(:empty)::after {
+    margin-left: 0.25em;
+  }
+}
+
+@import "pickAThing", "updateInitiativeStatistics";

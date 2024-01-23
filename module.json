@@ -6,7 +6,7 @@
     "verified": "11.315"
   },
   "esmodules": ["scripts/init.mjs"],
-  "styles": ["styles/pickAThing.css"],
+  "styles": ["styles/main.css"],
   "authors": [
     {
       "name": "Emmanuel Wineberg",

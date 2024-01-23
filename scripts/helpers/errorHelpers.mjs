@@ -33,7 +33,7 @@ export function localizedBanner(
 }
 
 export function MHLError(str, data = {}, { notify = null, prefix = "MHL | ", log = {}, func = null } = {}) {
-  if (func && typeof func === "string") prefix += func;
+  if (func && typeof func === "string") prefix += `${func} |`;
   return localizedError(str, data, { notify, prefix, log });
 }
 

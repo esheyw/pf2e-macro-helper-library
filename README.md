@@ -62,6 +62,7 @@ isEmpty({0:1}) == false
 Passes `loggable` to `console[type]()`, with `prefix` as a separate argument first for ease of console filtering.
 #### `mhlog(loggable, type = null, prefix="MHL |") `
 Simple wrapper on the above with a set prefix.
+
 ---
 ### PF2e-specific Helpers
 #### `levelBasedDC(level)`  
@@ -118,7 +119,7 @@ This is mostly personal preference, but it means that any callbacks you use with
 #### Doesn't clobber the classes array
 In base Dialog, the way Application handles merging the options object, if you specify `classes:["my-class"]` as part of your dialog options, it will overwrite the array entirely, removing the `"dialog"` class. MHLDialog includes a workaround for this, and adds its own class (`"mhldialog"`) to the list in addition to whatever you give it.
 #### Handlebars as `content`
-Supports passing either a path to a handlebars file (must have extension `.html` or `.hbs`), or an inline handlebars template string, as `content` in dialog data. The temlpate is compiled and then passed the contents of the `contentData` property, in addition to the `buttons` and `content` variables that the base class provides, as well as the `idPrefix` variable, which is set to `mhldialog-${this.appId}-`. This last allows [valid-by-html-rules](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id) `id` properties on your form inputs, and associated labels, eg:
+Supports passing either a path to a handlebars file (must have extension `.html` or `.hbs`), or an inline handlebars template string, as `content` in dialog data. The template is compiled and then passed the contents of the `contentData` property, in addition to the `buttons` and `content` variables that the base class provides, as well as the `idPrefix` variable, which is set to `mhldialog-${this.appId}-`. This last allows [valid-by-html-rules](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id) `id` properties on your form inputs, and associated labels, eg:
 ```hbs
 <form>
   <div class="form-group">
