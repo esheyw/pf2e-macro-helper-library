@@ -4,12 +4,11 @@
   "description": "PF2e Macro & Helper Library",
   "main": "scripts/init.mjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "sass": "sass styles/main.scss styles/main.css"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/esheyw/pf2e-macro-helper-library.git"
+    "url": "github:esheyw/pf2e-macro-helper-library"
   },
   "author": "Emmanuel Wineberg <esheyw@gmail.com>",
   "license": "MIT",

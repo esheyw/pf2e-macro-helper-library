@@ -4,3 +4,6 @@ jsconfig.json
 foundry/common
 styles/*.css
 styles/*.map
+.vscode/
+foundry.js
+commons.js

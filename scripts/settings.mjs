@@ -11,3 +11,7 @@ export function registerSettings() {
   });
 }
 export const NOTIFY = () => game.settings.get(MODULE, 'notify-on-error');
+
+export function setting(path) {
+  return game.settings.get(MODULE, path);
+}

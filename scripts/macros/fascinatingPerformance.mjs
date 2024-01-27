@@ -2,7 +2,7 @@ import { MHLError } from "../helpers/errorHelpers.mjs";
 import { localize } from "../helpers/stringHelpers.mjs";
 import { oneTokenOnly } from "../helpers/tokenHelpers.mjs";
 import { anyTargets } from "../helpers/targetHelpers.mjs";
-import { NOTIFY } from "../settings.mjs";
+import { setting } from "../settings.mjs";
 const PREFIX = `MHL.Macro.FascinatingPerformance`;
 export async function fascinatingPerformance() {
   const token = oneTokenOnly();
@@ -123,7 +123,7 @@ export async function fascinatingPerformance() {
         (i) => i.name.toLowerCase().includes("immun") && i.name.toLowerCase().includes("fascinating performance")
       );
       if (immunityEffect) {
-        if (NOTIFY()) ui.notifications.warn(localize(`${PREFIX}.Warning.TargetImmune`, { name: targetToken.name }));
+        if (setting('notify-on-error')) ui.notifications.warn(localize(`${PREFIX}.Warning.TargetImmune`, { name: targetToken.name }));
         continue;
       }
       const extraRollOptions = [];

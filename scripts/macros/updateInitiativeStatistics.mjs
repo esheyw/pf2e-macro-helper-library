@@ -86,8 +86,10 @@ export async function updateInitiativeStatistics() {
       no: {
         icon: "<i class='fas fa-times'></i>",
         label: `Cancel Changes`,
+        callback: () => false
       },
     },
+    close: () => null,
     default: "yes",
     render: renderCallback,
   };
@@ -95,7 +97,9 @@ export async function updateInitiativeStatistics() {
     classes: ["update-initiative-statistics"],
     width: "auto",
   };
-  const { all, ...data } = await MHLDialog.wait(dialogData, dialogOptions);
+  const response = await MHLDialog.wait(dialogData, dialogOptions);
+  if (!response) return;
+  const { all, ...data } = response;
   const actorUpdates = [];
   const synthUpdates = [];
   for (const actorData of actorsData) {

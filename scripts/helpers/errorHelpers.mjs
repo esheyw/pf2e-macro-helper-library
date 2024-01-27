@@ -1,9 +1,9 @@
 import { BANNER_TYPES, CONSOLE_TYPES } from "../constants.mjs";
-import { NOTIFY } from "../settings.mjs";
+import { setting } from "../settings.mjs";
 import { localize } from "./stringHelpers.mjs";
 
 export function localizedError(str, data = {}, { notify = null, prefix = "", log = {} } = {}) {
-  notify ??= NOTIFY();
+  notify ??= setting('notify-on-error');
   let errorstr = "" + prefix;
   if (typeof log === "object" && Object.keys(log).length) mhlog(log, "error");
   if (typeof str !== "string") {
@@ -20,7 +20,7 @@ export function localizedBanner(
   { notify = null, prefix = "", log = {}, type = "info", console = true } = {}
 ) {
   const func = "localizedBanner";
-  notify ??= NOTIFY();
+  notify ??= setting('notify-on-error');
   if (!notify) return false;
   if (!BANNER_TYPES.includes(type)) throw MHLError(`MHL.Error.BannerType`, null, { func, log: { type } });
   let bannerstr = "" + prefix;
