@@ -34,12 +34,12 @@ jobs:
           manifest: https://github.com/${{github.repository}}/releases/latest/download/module.json
           download: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/module.zip
 
-      - name: Get Manifest Variables
-        id: manifest_variables
-        uses: antifree/json-to-variables@v1.1.2
-        with:
-          filename: module.json
-          prefix: manifest
+      # - name: Get Manifest Variables
+      #   id: manifest_variables
+      #   uses: antifree/json-to-variables@v1.1.2
+      #   with:
+      #     filename: module.json
+      #     prefix: manifest
 
       # Create a zip file with all files required by the module to add to the release
       - run: zip -r ./module.zip module.json LICENSE styles/*.css styles/*.map scripts/ templates/ lang/
@@ -57,23 +57,17 @@ jobs:
           artifacts: "./module.json, ./module.zip"
           tag: ${{ github.event.release.tag_name }}
           body: ${{ github.event.release.body }}
-      - name: Foundry Package Admin Release
-        id: fvtt_release
-        run: |
-          curl -X POST "https://api.foundryvtt.com/_api/packages/release_version/" \
-            -H "Content-Type: application/json" \
-            -H "Authorization: ${{ secrets.FOUNDRYVTT_RELEASE_TOKEN }}" \
-            -d '{
-              "id": "${{ github.event.repository.name }}",
-              "dry-run": true,
-              "release": {
-                "version": "${{ github.event.release.tag_name }}",
-                "manifest": "https://github.com/${{ github.repository }}/releases/download/${{github.event.release.tag_name}}/module.json",
-                "notes": "https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md",
-                "compatibility": {
-                  "minimum": "${{ env.manifest_compatibility_minimum }}",
-                  "verified": "${{ env.manifest_compatibility_verified }}",
-                  "maximum": "${{ env.manifest_compatibility_maximum }}"
-                }
-              }
-            }'
+      # - name: Foundry Package Admin Release
+      #   uses: fjogeleit/http-request-action@v1
+      #   with:
+      #     url: 'https://api.foundryvtt.com/_api/packages/release_version'
+      #     method: 'POST'
+      #     customHeaders: '{"Content-Type": "application/json", "Authorization": "${{ secrets.FOUNDRY_RELEASE_TOKEN }}"}'
+      #     data: '{"dry_run": true, "id" : "chris-premades", "release": {"version" :  "${{ github.event.release.tag_name }}", manifest: "https://github.com/${{ github.repository }}/releases/download/${{github.event.release.tag_name}}/module.json", "notes" : "https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md", "compatibility" : {"minimum": "${{ env.manifest_compatibility_minimum }}", "verified": "${{ env.manifest_compatibility_verified }}", "maximum": "${{ env.manifest_compatibility_maximum }}"} } }'
+
+      - name: Publish Module to FoundryVTT Website
+        id: publish-to-foundry-website
+        uses: cs96and/FoundryVTT-release-package@v1
+        with:
+          package-token: ${{ secrets.FOUNDRY_RELEASE_TOKEN }}
+          manifest-url: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/module.json
