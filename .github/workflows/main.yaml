@@ -67,7 +67,7 @@ jobs:
               "id": "${{ github.event.repository.name }}",
               "dry-run": true,
               "release": {
-                "version": "${{ env.manfiest_version }}",
+                "version": "${{ github.event.release.tag_name }}",
                 "manifest": "https://github.com/${{ github.repository }}/releases/download/${{github.event.release.tag_name}}/module.json",
                 "notes": "https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md",
                 "compatibility": {
