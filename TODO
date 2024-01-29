@@ -1,8 +1,5 @@
 - fix token settings on dropHeldTorch
 - brushup the group initiative skills dialog macro
-  - implement current column
-  - account for lores known by all selected
-  - finish localization
-- foundry package release api
+  - double check CSS on various themes/no-dorako
 - npm package setup, run link dev
   - or just a standalone script

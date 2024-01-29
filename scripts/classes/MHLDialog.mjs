@@ -94,10 +94,10 @@ export class MHLDialog extends Dialog {
       if (/\.(hbs|html)$/.test(data.content)) {
         data.content = await renderTemplate(originalContent, data);
       } else {
-        data.content = Handlebars.compile(originalContent, {
+        data.content = Handlebars.compile(originalContent)(data, {
           allowProtoMethodsByDefault: true,
           allowProtoPropertiesByDefault: true,
-        })(data);
+        });
       }
       data.content ||= localize(`${PREFIX}.Error.TemplateFailure`);
     }

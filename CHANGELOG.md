@@ -46,3 +46,6 @@
 ## Version 0.2.6
 - Attempt new foundry package release API
 - Update MHLDialog's template-as-content support to allow prototype method and property use, matching the behaviour of foundry's `renderTemplate()`
+
+## Version 0.2.7 
+- *Actually* update the template call properly.
