@@ -48,7 +48,7 @@
       "paths": ["lang", "styles", "templates"]
     }
   },
-  "version": "0.1",
+  "version": "0.2.6",
   "manifest": "updatedByRelease",
   "url": "updatedByRelease",
   "download": "updatedByRelease",

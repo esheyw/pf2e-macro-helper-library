@@ -57,6 +57,7 @@ jobs:
           artifacts: "./module.json, ./module.zip"
           tag: ${{ github.event.release.tag_name }}
           body: ${{ github.event.release.body }}
+          
       # - name: Foundry Package Admin Release
       #   uses: fjogeleit/http-request-action@v1
       #   with:

@@ -108,6 +108,7 @@ The purple text is the `indentifier`, which can be supplied to disambiguated thi
 
 ---
 ## Classes
+Classes are accessed via `game.pf2emhl.classes.`
 ### `MHLDialog`
 MHLDialog is designed to be a drop-in replacement for the foundry Dialog class, with a few improvements:
 #### Defaults to `jQuery:false` in options

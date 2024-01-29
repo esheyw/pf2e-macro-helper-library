@@ -2,13 +2,14 @@
   --mhl-frame-color-1: var(--color-primary-1, var(--color-bg-trait));
   --mhl-frame-color-2: var(--color-primary-2, var(--color-pf-primary-light));
   --mhl-text-color: var(--text-dark);
+  --mhl-text-header-color: var(--mhl-text-color);
   
   [data-color-scheme='dark'] {
     --mhl-text-color: var(--text-color-1, var(--text-light));    
     --mhl-text-header-color: var(--mhl-text-color);
   }
 
-  --mhl-text-header-color: var(--mhl-text-color);
+  
 
   [disabled] {
     cursor: not-allowed;
