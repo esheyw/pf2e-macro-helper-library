@@ -1,9 +1,8 @@
 pf2e-macro-helper-library.lock
-foundry/client
 jsconfig.json
-foundry/common
 styles/*.css
 styles/*.map
 .vscode/
 foundry.js
 commons.js
+packs/
