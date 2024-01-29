@@ -8,19 +8,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # Checkout
       - uses: actions/checkout@v2
-      - run: npm install
+      # build sass
+      - run: npm ci
       - run: npm run sass
-      # - name: Sass Build
-      #   # You may pin to the exact commit or the version.
-      #   # uses: gha-utilities/sass-build@a890a939b8c2b0778ea706fb091da0f1c6f38f92
-      #   uses: gha-utilities/sass-build@v0.5.1
-      #   with:
-      #     # Relative path(s) to SASS or SCSS file, eg. _scss/main.scss
-      #     source: styles/main.scss
-      #     # Path(s) compiled CSS should be saved, eg. ~/workspace_sass/assets/css/main.css
-      #     destination: styles/main.css
-      #     sourceMap: main.css.map
 
       # Substitute the Manifest and Download URLs in the module.json
       - name: Substitute Manifest and Download Links For Versioned Ones
@@ -33,13 +25,6 @@ jobs:
           url: https://github.com/${{github.repository}}
           manifest: https://github.com/${{github.repository}}/releases/latest/download/module.json
           download: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/module.zip
-
-      # - name: Get Manifest Variables
-      #   id: manifest_variables
-      #   uses: antifree/json-to-variables@v1.1.2
-      #   with:
-      #     filename: module.json
-      #     prefix: manifest
 
       # Create a zip file with all files required by the module to add to the release
       - run: zip -r ./module.zip module.json LICENSE styles/*.css styles/*.map scripts/ templates/ lang/
@@ -57,15 +42,7 @@ jobs:
           artifacts: "./module.json, ./module.zip"
           tag: ${{ github.event.release.tag_name }}
           body: ${{ github.event.release.body }}
-
-      # - name: Foundry Package Admin Release
-      #   uses: fjogeleit/http-request-action@v1
-      #   with:
-      #     url: 'https://api.foundryvtt.com/_api/packages/release_version'
-      #     method: 'POST'
-      #     customHeaders: '{"Content-Type": "application/json", "Authorization": "${{ secrets.FOUNDRY_RELEASE_TOKEN }}"}'
-      #     data: '{"dry_run": true, "id" : "chris-premades", "release": {"version" :  "${{ github.event.release.tag_name }}", manifest: "https://github.com/${{ github.repository }}/releases/download/${{github.event.release.tag_name}}/module.json", "notes" : "https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md", "compatibility" : {"minimum": "${{ env.manifest_compatibility_minimum }}", "verified": "${{ env.manifest_compatibility_verified }}", "maximum": "${{ env.manifest_compatibility_maximum }}"} } }'
-
+      # POST to the package admin release endpoint    
       - name: Publish Module to FoundryVTT Website
         id: publish-to-foundry-website
         uses: cs96and/FoundryVTT-release-package@v1
