@@ -6,7 +6,7 @@ export function prependIndefiniteArticle(string) {
 }
 
 export function capitalize(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
+  return string.capitalize();
 }
 
 export function localize(str, data = {}, { defaultEmpty = true } = {}) {
