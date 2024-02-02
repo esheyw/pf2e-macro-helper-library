@@ -1,4 +1,4 @@
-export const MODULE = "pf2e-macro-helper-library";
+export const MODULE_ID = "pf2e-macro-helper-library";
 export const PHYSICAL_ITEM_TYPES = [
   "armor",
   "backpack",
@@ -16,3 +16,13 @@ export const COLOURS = {
   error: "var(--color-level-error, red)",
 };
 export const LABELABLE_TAGS = ["button", "input", "meter", "output", "progress", "select", "textarea"];
+export const SETTINGS = {
+  "notify-on-error": {
+    config: true,
+    default: true,
+    hint: "MHL.Settings.NotifyOnError.Hint",
+    name: "MHL.Settings.NotifyOnError.Name",
+    scope: "client",
+    type: Boolean,
+  },
+};

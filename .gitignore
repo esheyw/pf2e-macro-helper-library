@@ -5,4 +5,5 @@ styles/*.map
 .vscode/
 foundry.js
 commons.js
-packs/
+packs/**
+node_modules

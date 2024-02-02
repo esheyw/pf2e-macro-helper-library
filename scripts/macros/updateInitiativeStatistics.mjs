@@ -1,7 +1,7 @@
 import { anyTokens } from "../helpers/tokenHelpers.mjs";
 import { MHLDialog } from "../classes/MHLDialog.mjs";
-import { MODULE, fu } from "../constants.mjs";
-import { MHLError, mhlog } from "../helpers/errorHelpers.mjs";
+import { MODULE_ID, fu } from "../constants.mjs";
+import { MHLError } from "../helpers/errorHelpers.mjs";
 import { localize } from "../helpers/stringHelpers.mjs";
 
 export async function updateInitiativeStatistics() {
@@ -76,7 +76,7 @@ export async function updateInitiativeStatistics() {
   const dialogData = {
     contentData,
     title: `Set Initiative Statistics`,
-    content: `modules/${MODULE}/templates/updateInitiativeStatistics.hbs`,
+    content: `modules/${MODULE_ID}/templates/updateInitiativeStatistics.hbs`,
     buttons: {
       yes: {
         icon: "<i class='fas fa-check'></i>",

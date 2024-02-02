@@ -4,7 +4,9 @@
   "description": "PF2e Macro & Helper Library",
   "main": "scripts/init.mjs",
   "scripts": {
-    "sass": "sass styles/main.scss styles/main.css"
+    "sass": "sass styles/main.scss styles/main.css",
+    "unpack": "node build/unpack.mjs",
+    "pack": "node build/pack.mjs"
   },
   "repository": {
     "type": "git",

@@ -3,3 +3,4 @@
   - double check CSS on various themes/no-dorako
 - npm package setup, run link dev
   - or just a standalone script
+- move validator wavy underline from inline style to sass

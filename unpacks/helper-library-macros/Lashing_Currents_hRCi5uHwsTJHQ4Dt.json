@@ -1,0 +1,26 @@
+{
+  "name": "Lashing Currents",
+  "type": "script",
+  "scope": "global",
+  "author": "xuYHxk9sJoYKM7d6",
+  "img": "icons/magic/water/waves-water-blue.webp",
+  "command": "await game.pf2emhl.macros.lashingCurrents();",
+  "folder": null,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "core": {}
+  },
+  "_stats": {
+    "systemId": "pf2e",
+    "systemVersion": "5.12.7",
+    "coreVersion": "11.315",
+    "createdTime": 1706489620730,
+    "modifiedTime": 1706489726405,
+    "lastModifiedBy": "xuYHxk9sJoYKM7d6"
+  },
+  "_id": "hRCi5uHwsTJHQ4Dt",
+  "sort": 0,
+  "_key": "!macros!hRCi5uHwsTJHQ4Dt"
+}

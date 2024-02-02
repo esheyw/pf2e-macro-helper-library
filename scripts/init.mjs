@@ -1,7 +1,9 @@
 import * as helpers from "./helpers/index.mjs";
 import * as macros from "./macros/index.mjs";
-import * as classes from './classes/index.mjs';
-import { registerSettings } from "./settings.mjs";
+import * as classes from "./classes/index.mjs";
+import { registerSettings, updateSettingsCache } from "./settings.mjs";
+import { MODULE_ID } from "./constants.mjs";
+export const MODULE = ()=> game.modules.get(MODULE_ID)
 Hooks.on("init", () => {
   game.pf2emhl = {
     macros,
@@ -15,11 +17,16 @@ Hooks.on("init", () => {
   if (game.modules.get("esheyw-transfer")?.active) {
     globalThis.mh = game.pf2emhl;
   }
+  game.pf2emhl.settings = {};
   registerSettings();
 
   Handlebars.registerHelper("mhlocalize", (value, options) => {
-    if ( value instanceof Handlebars.SafeString ) value = value.toString();
+    if (value instanceof Handlebars.SafeString) value = value.toString();
     const data = options.hash;
-    return helpers.localize(value,data)
+    return helpers.localize(value, data);
   });
+});
+
+Hooks.once("setup", () => {
+  updateSettingsCache();
 });

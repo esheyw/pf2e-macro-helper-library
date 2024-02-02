@@ -4,7 +4,7 @@ import { localize } from "../helpers/stringHelpers.mjs";
 const PREFIX = "MHL.Dialog";
 export class MHLDialog extends Dialog {
   constructor(data, options = {}) {
-    //validate the validator. TODO: add facility for list of non-empty inputs instead of function
+    //validate the validator. 
     if ("validator" in data) {
       let validator = data.validator;
       switch (typeof validator) {

@@ -3,7 +3,7 @@ import { pickItemFromActor } from "../helpers/pf2eHelpers.mjs";
 import { MHLError, localizedBanner } from "../helpers/errorHelpers.mjs";
 const PREFIX = "MHL.Macro.LashingCurrents";
 export async function lashingCurrents() {
-  const func = "lashingCurrents: ";
+  const func = "lashingCurrents";
   const token = oneTokenOnly();
   const actor = token.actor;
   const FORBIDDEN_RUNES = ["bloodbane", "kinWarding"];

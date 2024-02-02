@@ -33,43 +33,19 @@ export function localizedBanner(
 }
 
 export function MHLError(str, data = {}, { notify = null, prefix = "MHL | ", log = {}, func = null } = {}) {
-  if (func && typeof func === "string") prefix += `${func} |`;
+  if (func && typeof func === "string") prefix += `${func} | `;
   return localizedError(str, data, { notify, prefix, log });
-}
-
-// taken from https://stackoverflow.com/a/32728075, slightly modernized
-/**
- * Checks if value is empty. Deep-checks arrays and objects
- * Note: isEmpty([]) == true, isEmpty({}) == true, isEmpty([{0:false},"",0]) == true, isEmpty({0:1}) == false
- * @param value
- * @returns {boolean}
- */
-export function isEmpty(value) {
-  const isEmptyObject = (a) => {
-    if (!Array.isArray(a)) {
-      // it's an Object, not an Array
-      const hasNonempty = Object.keys(a).some((e) => !isEmpty(a[e]));
-      return hasNonempty ? false : isEmptyObject(Object.keys(a));
-    }
-    return !a.some((e) => !isEmpty(e));
-  };
-  return (
-    value == false ||
-    typeof value === "undefined" ||
-    value == null ||
-    (typeof value === "object" && isEmptyObject(value))
-  );
 }
 
 export function log(loggable, type = null, prefix = null) {
   type ??= "debug";
   if (!CONSOLE_TYPES.includes(type)) {
-    throw MHLError(`MHL.Error.LogTypes`, { types: BANNER_TYPES.join(", ") }, { func: "log: ", log: { type } });
+    throw MHLError(`MHL.Error.LogTypes`, { types: BANNER_TYPES.join(", ") }, { func: "log", log: { type } });
   }
   prefix ??= "";
   return console[type](prefix, loggable);
 }
 
-export function mhlog(loggable, type = null, prefix = "MHL |") {
+export function mhlog(loggable, type = null, prefix = "MHL | ") {
   return log(loggable, type, prefix);
 }
