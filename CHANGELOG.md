@@ -49,3 +49,6 @@
 
 ## Version 0.2.7 
 - *Actually* update the template call properly.
+
+## Version 0.2.8
+- Test cli pack-on-release
