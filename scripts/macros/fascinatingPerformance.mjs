@@ -1,10 +1,11 @@
-import { MHLError } from "../helpers/errorHelpers.mjs";
-import { localize } from "../helpers/stringHelpers.mjs";
+import { MHLBanner, MHLError, requireSystem } from "../helpers/errorHelpers.mjs";
 import { oneTokenOnly } from "../helpers/tokenHelpers.mjs";
 import { anyTargets } from "../helpers/targetHelpers.mjs";
-import { setting } from "../settings.mjs";
-const PREFIX = `MHL.Macro.FascinatingPerformance`;
+
 export async function fascinatingPerformance() {
+  const PREFIX = `MHL.Macro.FascinatingPerformance`;
+  const func = `fascinatingPerformance`;
+  requireSystem("pf2e", `MHL | ${func}`);
   const token = oneTokenOnly();
   const actor = token.actor;
 
@@ -12,7 +13,7 @@ export async function fascinatingPerformance() {
   if (!feat) {
     throw MHLError(`${PREFIX}.Error.MustHaveFeat`);
   }
-  const targets = anyTargets();
+  const targets = anyTargets({ func });
 
   const prfRank = actor.skills.performance.rank;
   switch (prfRank) {
@@ -123,7 +124,7 @@ export async function fascinatingPerformance() {
         (i) => i.name.toLowerCase().includes("immun") && i.name.toLowerCase().includes("fascinating performance")
       );
       if (immunityEffect) {
-        if (setting('notify-on-error')) ui.notifications.warn(localize(`${PREFIX}.Warning.TargetImmune`, { name: targetToken.name }));
+        MHLBanner(`${PREFIX}.Warning.TargetImmune`, { name: targetToken.name }, { func });
         continue;
       }
       const extraRollOptions = [];

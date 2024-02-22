@@ -1,12 +1,13 @@
 import { anyTokens } from "../helpers/tokenHelpers.mjs";
 import { MHLDialog } from "../classes/MHLDialog.mjs";
 import { MODULE_ID, fu } from "../constants.mjs";
-import { MHLError } from "../helpers/errorHelpers.mjs";
+import { MHLError, requireSystem } from "../helpers/errorHelpers.mjs";
 import { localize } from "../helpers/stringHelpers.mjs";
 
 export async function updateInitiativeStatistics() {
   const PREFIX = "MHL.Macro.UpdateInitiativeStatistics";
   const func = "updateInitiativeStatistics";
+  requireSystem("pf2e", `MHL | ${func}`);
   const tokens = anyTokens().filter(
     (t) => ["character", "npc"].includes(t.actor.type) && !t.actor.traits.intersects(new Set(["minion", "eidolon"]))
   );
@@ -86,7 +87,7 @@ export async function updateInitiativeStatistics() {
       no: {
         icon: "<i class='fas fa-times'></i>",
         label: `Cancel Changes`,
-        callback: () => false
+        callback: () => false,
       },
     },
     close: () => null,

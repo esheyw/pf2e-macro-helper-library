@@ -1,9 +1,11 @@
 import { oneTokenOnly } from "../helpers/tokenHelpers.mjs";
 import { pickItemFromActor } from "../helpers/pf2eHelpers.mjs";
-import { MHLError, localizedBanner } from "../helpers/errorHelpers.mjs";
-const PREFIX = "MHL.Macro.LashingCurrents";
+import { MHLError, localizedBanner, requireSystem } from "../helpers/errorHelpers.mjs";
+
 export async function lashingCurrents() {
+  const PREFIX = "MHL.Macro.LashingCurrents";
   const func = "lashingCurrents";
+  requireSystem("pf2e", `MHL | ${func}`);
   const token = oneTokenOnly();
   const actor = token.actor;
   const FORBIDDEN_RUNES = ["bloodbane", "kinWarding"];
@@ -57,7 +59,7 @@ export async function lashingCurrents() {
       });
     }
     await relicWeapon.update({ "system.rules": rules.concat(relicWeapon.system.rules) });
-  } else {    
+  } else {
     const oldRules = existingLC.system.rules.filter(
       (r) =>
         !(
@@ -67,6 +69,6 @@ export async function lashingCurrents() {
         )
     );
     await existingLC.update({ "system.rules": oldRules });
-    localizedBanner(`${PREFIX}.Info.Removing`, {name: existingLC.name}, {console:false});
+    localizedBanner(`${PREFIX}.Info.Removing`, { name: existingLC.name }, { console: false });
   }
 }

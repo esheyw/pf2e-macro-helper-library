@@ -1,20 +1,19 @@
 import { PHYSICAL_ITEM_TYPES } from "../constants.mjs";
-import { MHLError, localizedBanner } from "./errorHelpers.mjs";
+import { MHLError, MHLBanner } from "./errorHelpers.mjs";
 import { pickAThingDialog } from "./otherHelpers.mjs";
 import { prependIndefiniteArticle } from "./stringHelpers.mjs";
 
-const PREFIX = "MHL";
 export function levelBasedDC(level) {
-  const func = "levelBasedDC: ";
+  const func = "levelBasedDC";
   if (typeof level !== "number") {
-    throw MHLError(`${PREFIX}.Error.Type.Number`, { var: "level" }, { func, log: { level } });
+    throw MHLError(`MHL.Error.Type.Number`, { var: "level" }, { func, log: { level } });
   }
   const DCByLevel = [
     14, 15, 16, 18, 19, 20, 22, 23, 24, 26, 27, 28, 30, 31, 32, 34, 35, 36, 38, 39, 40, 42, 44, 46, 48, 50,
   ];
   let DC = 0;
   if (level >= DCByLevel.length || level < -1) {
-    localizedBanner(`${PREFIX}.Warning.LevelOutOfBounds`, { level }, { prefix: func, type: "warn" });
+    MHLBanner(`MHL.Warning.LevelOutOfBounds`, { level }, { func });
     level = 26;
   }
   if (level === -1) {
@@ -45,14 +44,14 @@ export async function pickItemFromActor(
     filteredItems = actor.items.filter((i) => i.type === itemType) ?? [];
   }
   if (!filteredItems.length) {
-    if (errorIfEmpty) throw MHLError(`${PREFIX}.Error.NoItemsOfType`, { itemType });
+    if (errorIfEmpty) throw MHLError(`MHL.Error.NoItemsOfType`, { itemType });
     return null;
   }
 
   if (otherFilter && typeof otherFilter === "function") {
     filteredItems = filteredItems.filter(otherFilter);
     if (!filteredItems.length) {
-      if (errorIfEmpty) throw MHLError(`${PREFIX}.Error.FilterUnmatched`, null, { log: { filter: otherFilter } });
+      if (errorIfEmpty) throw MHLError(`MHL.Error.FilterUnmatched`, null, { log: { filter: otherFilter } });
       return null;
     }
   }
@@ -60,7 +59,7 @@ export async function pickItemFromActor(
   if (held) {
     filteredItems = filteredItems.filter((i) => i.system.equipped.carryType === "held") ?? [];
     if (!filteredItems.length) {
-      if (errorIfEmpty) throw MHLError(`${PREFIX}.Error.NoMatchingHeld`);
+      if (errorIfEmpty) throw MHLError(`MHL.Error.NoMatchingHeld`);
       return null;
     }
   }
@@ -117,10 +116,10 @@ export async function getAllFromAllowedPacks({
     throw MHLError(`MHL.Error.InvalidType`, { type: originalType }, { func });
   }
   if (!Array.isArray(fields) || (fields.length && fields.some((f) => typeof f !== "string"))) {
-    throw MHLError(`${PREFIX}.Error.FieldsFormat`, null, { func, log: { fields } });
+    throw MHLError(`MHL.Error.FieldsFormat`, null, { func, log: { fields } });
   }
   if (filter && typeof filter !== "function") {
-    throw MHLError(`${PREFIX}.Error.Type.Function`, { var: "filter" }, { func, log: { filter } });
+    throw MHLError(`MHL.Error.Type.Function`, { var: "filter" }, { func, log: { filter } });
   }
 
   //initialize the sources list if it hasn't been set

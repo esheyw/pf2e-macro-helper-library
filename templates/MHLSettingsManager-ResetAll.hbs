@@ -1,0 +1,45 @@
+{{!-- 
+
+<style>
+  {{#each settings as |data setting|}}
+    {{#if (isColor currentValue)}}
+    .mhl-dialog.mhl-reset-all td.{{setting}}-current-color::after {
+      content: " \25A1";
+      color: {{currentValue}};
+    }
+    {{/if}}
+    {{#if (isColor defaultValue)}}
+    .mhl-dialog.mhl-reset-all td.{{setting}}-default-color::after {
+      content: " \25A0";
+      color: "{{defaultValue}}";
+    }
+    {{/if}}
+  {{/each}}
+</style> --}}
+
+<h3>{{mhlocalize "MHL.SettingsManager.ResetAll.Header" module=module}}</h3>
+<p>
+{{!-- {{mhlocalize "MHL.SettingsManager.ResetAll.Body"}} --}}
+  This module has <span class="count-tooltip" data-tooltip-direction="UP" data-tooltip="{{defaultlessTooltip}}">{{defaultlessCount}}</span> settings without defaults, and <span class="count-tooltip" data-tooltip-direction="UP" data-tooltip="{{areDefaultTooltip}}">{{areDefault}}</span> settings that are unchanged from their default. This action will reset:</p>
+<table>
+  <thead>
+    <tr>
+      <th>{{mhlocalize "DOCUMENT.Setting"}}</th>
+      <th>{{mhlocalize "MHL.Visible"}}</th>
+      <th>{{mhlocalize "MHL.CurrentValue"}}</th>
+      <th>{{mhlocalize "MHL.DefaultValue"}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each changed}}
+    <tr>
+      <td>{{@key}}</td>
+      <td>{{visible}}</td>
+      <td><code>{{currentValue}}</code></td>
+      <td><code>{{defaultValue}}</code></td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+<em>Note: This will apply immediately to the actual settings, not just the inputs in the settings window.</em>

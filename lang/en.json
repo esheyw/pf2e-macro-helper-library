@@ -1,9 +1,15 @@
 {
   "MHL": {
-    "Header": {
-      "Current": "Current",
-      "SetTo": "Set To"
-    },
+    "Count": "Count",
+    "Current": "Current",
+    "CurrentValue": "Current Value",
+    "DefaultValue": "Default Value",
+    "Group": "Group",
+    "HasDefault": "Has Default",
+    "IsDefault": "Is Default",
+    "NotApplicable": "N/A",
+    "SetTo": "Set To",
+    "Visible":"Visible",
     "Grammar": {
       "Articles": {
         "An": "an",
@@ -14,12 +20,63 @@
     "PickAThing": {
       "Title": "Pick A Thing",
       "Error": {
-        "ThingsFormat": "`things` must be an array of {name:,value:, img?:,identifier?:} objects.",
+        "ThingsFormat": "`things` must be an array of \\{name: string, value: any, img?: string, identifier?: string} objects.",
         "MalformedThing": "Provided thing lacked valid label or value."
+      }
+    },
+    "SettingsManager": {
+      "Reset": {
+        "Title": "Reset to Default",
+        "Body": "Reset <strong>{setting}</strong> to default value (<code>{value}</code>)? <br><em>Note: This will apply immediately to the actual setting, not just the input in the settings window.</em>",
+        "Tooltip": "Reset this setting to its default value",
+        "IsDefault": "Setting is currently equal to its default value"
+      },
+      "ResetAll": {
+        "Title": "Reset All to Default",
+        "Header": "Reset All {module} Settings?",
+        "Body": "Reset all <strong>{module}</strong> settings to their default values ({count} settings currently not default)? <br><em>Note: This will apply immediately to the actual settings, not just the inputs in the settings window.</em>",
+        "Tooltip": "Reset all of this module's settings to default values",
+        "AllDefault": "All settings are currently equal to their default value"
+      },
+      "ColorPicker": {
+        "ValidHexCode": "Must be a # followed by a valid 6-character hex color code"
+      },
+      "Error": {
+        "Hooks": {
+          "BadHook": "Hook data for setting {setting} of {module} is malformed; Must be an object containing a string `hook` key.",
+          "RequiresAction": "Hook {hook} for setting {setting} of {module} requires an `action` key containing a function.",
+          "TestFunction": "Hook data for setting {setting} of {module} is malformed; `test`, if provided, must be a function."
+        },
+        "InvalidSettingData": "Setting `{setting}` for module {module} failed to validate and was not registered.",
+        "NoValidSettings": "No valid settings could be retrieved from passed data for module {module}.",
+        "BadModuleID": "moduleID must be a string module ID or a Module object reference.",
+        "Visibility": {
+          "UnknownDependency": "Setting {dependsOn} not found, so it cannot be predicated on for visibility for setting {setting} of {module}.",
+          "BadObject": "Visibility data for setting {setting} of {module} is malformed; requires a string `dependsOn` key referencing a valid setting.",
+          "TestFunction": "Visibility data for setting {setting} of {module} is malformed; `test`, if provided, must be a function.",
+          "BadFormat": "Visibility data for setting {setting} must be either a string setting ID (with optional ! prefix) or an object containing such under the `dependsOn` key, with an optional `test` function key."
+        },
+        "DuplicateSetting": "Setting ID \"{setting}\" already exists for {module}.",
+        "Button": {
+          "BadFormat": "Button data must be an object with at least an `action` key containing a function.",
+          "Label": "A setting's `button` data must contain a `label` key, either string or null (for localization key inference).",
+          "Action": "A button replacement action must be a function."
+        },
+        "NoDefault": "Setting {setting} of {module} does not have a default value recorded and cannot be reset.",
+        "NotRegistered": "Setting {setting} is not registered for {module}.",
+        "InvalidSettingsMap": "Settings data Map must be entirely string keys and object values.",
+        "InvalidSettingsObject": "Settings data object must be entirely string keys and object values.",
+        "InvalidSettingsArray": "Settings data Array must be entirely objects with string `id` keys.",
+        "InvalidSettingsUnknown": "Settings data of unknown format cannot be processed."
+      },
+      "Warning": {
+        "CacheMiss": "Cache miss retrieving setting {key} from module {module}",
+        "RetrievalBeforeInit": "Attempting to retrive setting \"{key}\" of {module} but the settings manager is not yet initialized, returning undefined."
       }
     },
     "Dialog": {
       "Warning": {
+        "FormLacksName": "Form with no `name` found, falling back on numeric key.",
         "RequiredFields": "This dialog requires one or more fields to be non-empty: {fields}"
       },
       "Error": {
@@ -78,48 +135,77 @@
       "FilterUnmatched": "Provided filter produced no valid items.",
       "NoMatchingHeld": "Selected actor is not holding any matching items."
     },
-    "Token": {
-      "Error": {
-        "Fallback": ", or a token of your assigned character on the current scene",
-        "NotAnySelected": "Must have at least one token selected{fallback}.",
-        "NotOneSelected": "Must have exactly one token selected{fallback}."
-      }
-    },
-    "Target": {
-      "Error": {
-        "NotOneTargetted": "Must have exactly one token targetted.",
-        "NotAnyTargetted": "Must have at least one token targetted."
-      },
-      "Info": {
-        "Fallback": "This operation requires a single target, using first target \"{name}\"."
-      }
-    },
     "User": {
       "Error": {
         "NotAUser": "Provided user was not a foundry User."
       }
     },
     "Error": {
+      "UnsupportedDocument":"Document type {type} not supported by this function.",
+      "Target": {
+        "NotOneTargetted": "Must have exactly one token targetted.",
+        "NotAnyTargetted": "Must have at least one token targetted."
+      },
+      "Token": {
+        "Fallback": ", or a token of your assigned character on the current scene",
+        "NotAnySelected": "Must have at least one token selected{fallback}.",
+        "NotOneSelected": "Must not have more than one token selected."
+      },
+      "StringFailedValidation": " {type}",
+      "TooEarlyForBanner": "Banner creation aborted because game isn't Ready, attempted type \"{type}\", string: \"{bannerstr}\"",
+      "InvalidCamel": "I don't think {camel} is a real camel.",
+      "RequiresSystem": "This macro/helper/class is only compatible with the <code>{system}</code> system.",
       "Generic": "You broke something.",
       "BannerType": "Banner type must be one of \"info\", \"warn\", or \"error\".",
       "LogType": "Log type must be one of \"debug\", \"info\", \"warn\", or \"error\".",
       "InvalidType": "Invalid type \"{type}\" provided.",
+      "Validation": {
+        "FontAwesomeClasses": "\"{string}\" failed to validate as a set of FontAwesome icon classes.",
+        "FontAwesomeIcon": "\"{string}\" failed to validate as a FontAwesome icon element."
+      },
       "Type": {
-        "Array": "\"{var}\" must be an Array{typestr}.",
-        "User": "\"{var}\" must be a User or the ID of one.",
-        "Folder": "\"{var}\" must be a Folder document or the ID of one.",
-        "Function": "\"{var}\" must be a Function.",
-        "Number": "\"{var}\" must be a Number.",
-        "String": "\"{var}\" must be a String."
+        "Array": "`{var}` must be an Array{typestr}.",
+        "User": "`{var}` must be a User or the ID of one.",
+        "Folder": "`{var}` must be a Folder document or the ID of one.",
+        "Function": "`{var}` must be a Function.",
+        "Number": "`{var}` must be a Number.",
+        "String": "`{var}` must be a String.",
+        "Boolean": "`{var}` must be Boolean."
       }
     },
     "Warning": {
+      "Fallback": {
+        "BannerType": "Provided notification banner type \"{type}\" is not valid, defaulting to \"{defaultType}\".",
+        "FirstTarget": "This operation requires a single target, using first target \"{name}\".",
+        "FirstToken": "This operation requires a single selected token, using first token \"{name}\".",
+        "LogType": "Provided log type \"{type}\" is not valid, defaulting to \"{defaultType}\".",
+        "Type": "Expected parameter \"{var}\" to be of type \"{expected}\", not \"{type}\". Casting."
+      },
+      "SystemBelowVerified": "Your system version ({version}) is older than what Macro & Helper Library is verified for ({verified}). This may cause things to break, or might not; No guarantees.",
       "LevelOutOfBounds": "Provided level ({level}) out of bounds! Defaulting to level 25."
     },
-    "Settings": {
+    "Setting": {
+      "LogLevel": {
+        "Name": "Default Log Level",
+        "Hint": "The default level for mhlog() calls. Setting this to Warning or Error can be helpful with troubleshooting.",
+        "Choice": {
+          "Debug": "Debug",
+          "Info": "Info",
+          "Warn": "Warning",
+          "Error": "Error"
+        }
+      },
       "NotifyOnError": {
         "Name": "Banner Notifications",
         "Hint": "Show banner notifications on macro error? (errors will be in console either way)"
+      },
+      "LegacyAccess": {
+        "Name": "Enable legacy access to MHL API",
+        "Hint": "Populates `game.pf2emhl`, as is tradition. Available only after the Setup hook."
+      },
+      "PolluteGlobal": {
+        "Name": "Global API access",
+        "Hint": "Makes the MHL API accessible via just `mhl` in the global scope. Available only after the Setup hook."
       }
     }
   }

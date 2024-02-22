@@ -12,17 +12,7 @@ export const PHYSICAL_ITEM_TYPES = [
 export const fu = foundry.utils;
 export const CONSOLE_TYPES = ["debug", "info", "warn", "error"];
 export const BANNER_TYPES = CONSOLE_TYPES.slice(1);
-export const COLOURS = {
-  error: "var(--color-level-error, red)",
-};
 export const LABELABLE_TAGS = ["button", "input", "meter", "output", "progress", "select", "textarea"];
-export const SETTINGS = {
-  "notify-on-error": {
-    config: true,
-    default: true,
-    hint: "MHL.Settings.NotifyOnError.Hint",
-    name: "MHL.Settings.NotifyOnError.Name",
-    scope: "client",
-    type: Boolean,
-  },
+export const VERIFIED_SYSTEM_VERSIONS = {
+  pf2e: 5.12,
 };

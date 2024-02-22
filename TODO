@@ -4,3 +4,12 @@
 - npm package setup, run link dev
   - or just a standalone script
 - move validator wavy underline from inline style to sass
+- update MCT readme for player folders
+- license stuff for sluggify
+- clean up error handling in registerSetting replaceWith section
+  - generalize throwOnError?
+- improve reset setting dialog formatting and choice label retreival
+- better error handling/fallback generally
+- reset all button in module header/hide reset anchors toggle
+- add settings groups, reset per group
+- set up physical types per system

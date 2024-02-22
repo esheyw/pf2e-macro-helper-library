@@ -1,6 +1,6 @@
 {
   "id": "pf2e-macro-helper-library",
-  "title": "PF2e Macro & Helper Library",
+  "title": "Macro & Helper Library",
   "compatibility": {
     "minimum": "11",
     "verified": "11.315"
@@ -23,25 +23,13 @@
       "flags": {}
     }
   ],
-  "relationships": {
-    "systems": [
-      {
-        "id": "pf2e",
-        "type": "system",
-        "compatibility": {
-          "minimum": "5.12"
-        }
-      }
-    ]
-  },
   "license": "LICENSE",
   "flags": {
     "hotReload": {
-      "extensions": ["css", "hbs", "json"],
-      "paths": ["lang", "styles", "templates"]
+      "extensions": ["css", "hbs", "json"]
     }
   },
-  "version": "0.2.6",
+  "version": "0.2.8",
   "manifest": "updatedByRelease",
   "url": "updatedByRelease",
   "download": "updatedByRelease",
@@ -65,9 +53,8 @@
       "name": "Macro Helper Library",
       "color": "#124b47",
       "sorting": "m",
-      "packs": [
-        "helper-library-macros"
-      ]
+      "packs": ["helper-library-macros"]
     }
-  ]
+  ],
+  "library": true
 }
