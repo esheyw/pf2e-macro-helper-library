@@ -8,12 +8,12 @@ const PREFIX = `MHL.SettingsManager`;
 const funcPrefix = `MHLSettingsManager`;
 export class MHLSettingsManager {
   #module;
-  #cache = {};
   #potentialSettings = new Set();
   #settings = new Collection();
   #visibilityControlElements = new Set();
   #nonDefaults = new Set();
   #resetListeners = new Map();
+  #resetAllListener;
   #hooks = {};
   #initialized = false;
 
@@ -45,17 +45,17 @@ export class MHLSettingsManager {
   #onRenderSettings(app, html, data) {
     html = html instanceof jQuery ? html[0] : html; // futureproofing
     const clientSettings = this.#settings.filter((setting) => setting?.scope !== "world");
+    //if there's nothign to display anyway, bail
     if (!clientSettings.length && !isRealGM(game.user)) return;
     const moduleSection = htmlQuery(html, `section[data-category="${this.#module.id}"]`);
     moduleSection.classList.add("mhl-settings-manager");
-
+    mhlog({app,html,data})
     if (this.options.resetButtons) {
       this.#addResetAllButton(moduleSection);
     }
 
     const settingDivs = htmlQueryAll(moduleSection, `[data-setting-id]`);
     for (const div of settingDivs) {
-      //TODO: make setVisibility and setHook update data?
       const settingData = game.settings.settings.get(div.dataset.settingId);
       if (this.options.buttons && "button" in settingData) {
         this.#replaceWithButton(div, settingData.button);
@@ -81,40 +81,25 @@ export class MHLSettingsManager {
     }
   }
 
-  get(key, { silent = false } = {}) {
+  get(key) {
     const func = `${funcPrefix}#get`;
-    const settingPath = key.replace("_", ".");
-    const cached = fu.getProperty(this.#cache, settingPath);
-    //in case this somehow gets called before settings are registered; log types must be explicit to avoid infinite loop
-    if (cached === undefined && game?.user) {
-      if (!silent) {
-        mhlog(`${PREFIX}.Warning.CacheMiss`, {
-          type: 'warn',
+    if (game?.user) {
+      if (game.settings.settings.get(`${this.#module.id}.${key}`) === undefined) {
+        mhlog(`${PREFIX}.Error.NotRegistered`, {
+          type: "error",
           data: { key, module: this.#module.id },
           localize: true,
           func,
         });
-      }
-      if (game.settings.settings.get(`${this.#module.id}.${key}`) === undefined) {
-        if (!silent) {
-          mhlog(`${PREFIX}.Error.NotRegistered`, {
-            type: "error",
-            data: { key, module: this.#module.id },
-            localize: true,
-            func,
-          });
-        }
         return undefined;
       } else {
         const value = game.settings.get(this.#module.id, key);
-        this.#updateCache(key);
-        mhlog({value}, {type: 'warn', prefix:'value retrieved'})
         return value;
       }
     }
-    return cached;
+    return undefined;
   }
-  // mostly here for completeness sake, the onChange already handles cache updates
+
   async set(setting, value) {
     const func = `${funcPrefix}#set`;
     if (!this.#requireSetting(setting, func)) return undefined;
@@ -172,16 +157,10 @@ export class MHLSettingsManager {
       }
     }
     if (game?.user) {
-      this.#updateCache();
+      // 'are settings available' hack
       this.#updateHooks();
     } else {
-      Hooks.once(
-        "setup",
-        function () {
-          this.#updateCache();
-          this.#updateHooks();
-        }.bind(this)
-      );
+      Hooks.once("setup", this.#updateHooks.bind(this));
     }
   }
 
@@ -224,10 +203,9 @@ export class MHLSettingsManager {
       if (!data.visbility) delete data.visbility;
     }
 
-    //update the cache every time a setting is changed
+    //update hooks every time a setting is changed
     const originalOnChange = "onChange" in data ? data.onChange : null;
     data.onChange = function (value) {
-      this.#updateCache(setting);
       this.#updateHooks(setting);
       if (originalOnChange) originalOnChange(value);
     }.bind(this);
@@ -242,13 +220,11 @@ export class MHLSettingsManager {
 
     //handle setting-conditional hooks, has to happen after registration or the error handling in setHooks gets gross
     if ("hooks" in data) {
-      this.setHooks(setting, data.hooks, { initial });
+      data.hooks = this.#processHooksData(setting, data.hooks);
+      if (!data.hooks) delete data.hooks;
     }
-    // only update hooks and cache if we're not inside a registerSettings call
-    if (!initial) {
-      this.#updateHooks(setting);
-      this.#updateCache(setting);
-    }
+    // only update hooks if we're not inside a registerSettings call
+    if (!initial) this.#updateHooks(setting);
     this.#potentialSettings.delete(setting);
     return true;
   }
@@ -348,81 +324,56 @@ export class MHLSettingsManager {
       test,
     };
   }
-  #processHookData(setting, hookData) {
-    const func = `${funcPrefix}#validateHookData`;
-    let invalid = false;
-    let errorstr = "";
-    if (typeof hookData !== "object" || ("hook" in hookData && typeof hookData.hook !== "string")) {
-      errorstr = `${PREFIX}.Error.Hooks.BadHook`;
-      invalid = true;
+  #processHooksData(setting, hooksData) {
+    const func = `${funcPrefix}#processHooksData`;
+    const goodHooks = [];
+    if (!Array.isArray(hooksData)) hooksData = [hooksData];
+    for (const hookData of hooksData) {
+      let invalid = false;
+      let errorstr = "";
+      if (typeof hookData !== "object" || ("hook" in hookData && typeof hookData.hook !== "string")) {
+        errorstr = `${PREFIX}.Error.Hooks.BadHook`;
+        invalid = true;
+      }
+      if (!invalid && "action" in hookData && typeof hookData.action !== "function") {
+        errorstr = `${PREFIX}.Error.Hooks.RequiresAction`;
+        invalid = true;
+      }
+      if (!invalid && "test" in hookData && typeof hookData.test !== "function") {
+        errorstr = `${PREFIX}.Error.Hooks.TestFunction`;
+        invalid = true;
+      }
+      if (invalid) {
+        mhlog(
+          { setting, hookData, module: this.#module.id },
+          {
+            type: "error",
+            localize: true,
+            prefix: errorstr,
+            data: { setting, hook: hookData?.hook, module: this.#module.id },
+            func,
+          }
+        );
+        continue;
+      }
+      //default test if none provided
+      hookData.test ??= (value) => !!value;
+      goodHooks.push(hookData);
     }
-    if (!invalid && "action" in hookData && typeof hookData.action !== "function") {
-      errorstr = `${PREFIX}.Error.Hooks.RequiresAction`;
-      invalid = true;
-    }
-    if (!invalid && "test" in hookData && typeof hookData.test !== "function") {
-      errorstr = `${PREFIX}.Error.Hooks.TestFunction`;
-      invalid = true;
-    }
-    if (invalid) {
-      mhlog(
-        { setting, hookData, module: this.#module.id },
-        {
-          type: "error",
-          localize: true,
-          prefix: errorstr,
-          data: { setting, hook: hookData?.hook, module: this.#module.id },
-          func,
-        }
-      );
-      return false;
-    }
+    return goodHooks.length ? goodHooks : false;
   }
   setHooks(setting, hooks, { initial = false } = {}) {
-    //accept single hook object instead of array if provided
-    const outcomes = [];
-    if (!Array.isArray(hooks)) hooks = [hooks];
-    for (const hook of hooks) this.setHook(setting, hook, { deferUpdate: true });
+    const func = `${funcPrefix}#setHooks`;
+    if (!this.#requireSetting(setting, func)) return undefined;
+    const hooksData = this.#processHooksData(hooks);
+    if (!hooksData) return false;
+    const data = this.#settings.get(setting);
+    data.hooks ??= [];
+    data.hooks.push(...hooksData);
+    this.#settings.set(setting, data);
     //don't update hooks if we're in the middle of registering settings
     if (!initial) this.#updateHooks();
-  }
-
-  setHook(setting, hookData, { deferUpdate = false } = {}) {
-    const func = `${funcPrefix}#setHook`;
-    if (!this.#requireSetting(setting, func)) return undefined;
-    let invalid = false;
-    let errorstr = "";
-    if (typeof hookData !== "object" || ("hook" in hookData && typeof hookData.hook !== "string")) {
-      errorstr = `${PREFIX}.Error.Hooks.BadHook`;
-      invalid = true;
-    }
-    if (!invalid && "action" in hookData && typeof hookData.action !== "function") {
-      errorstr = `${PREFIX}.Error.Hooks.RequiresAction`;
-      invalid = true;
-    }
-    if (!invalid && "test" in hookData && typeof hookData.test !== "function") {
-      errorstr = `${PREFIX}.Error.Hooks.TestFunction`;
-      invalid = true;
-    }
-    if (invalid) {
-      mhlog(
-        { setting, hookData, module: this.#module.id },
-        {
-          type: "error",
-          localize: true,
-          prefix: errorstr,
-          data: { setting, hook: hookData.hook, module: this.#module.id },
-          func,
-        }
-      );
-      return false;
-    }
-    //default test if none provided
-    hookData.test ??= (value) => !!value;
-    this.#hooks[setting] ??= [];
-    this.#hooks[setting].push(hookData);
-    if (!deferUpdate) this.#updateHooks(setting);
-    return true;
+    return hooksData.length;
   }
 
   setButton(setting, buttonData) {
@@ -433,6 +384,7 @@ export class MHLSettingsManager {
     const processed = this.#processButtonData(setting, buttonData);
     if (processed) {
       savedData.button = processed;
+      this.#settings.set(setting, savedData);
       game.settings.settings.set(fullKey, savedData);
       return true;
     }
@@ -447,6 +399,7 @@ export class MHLSettingsManager {
     const processed = this.#processVisibilityData(setting, visibilityData);
     if (processed) {
       savedData.visibility = processed;
+      this.#settings.set(setting, savedData);
       game.settings.settings.set(fullKey, savedData);
       return true;
     }
@@ -454,36 +407,21 @@ export class MHLSettingsManager {
   }
 
   #updateHooks(key = null) {
-    for (const [setting, hooks] of Object.entries(this.#hooks)) {
-      if (key && key !== setting) continue;
+    for (const [setting, data] of this.#settings.entries()) {
+      if ((key && key !== setting) || !("hooks" in data)) continue;
       const value = this.get(setting);
-      for (let i = 0; i < hooks.length; i++) {
-        const active = hooks[i].test(value);
-        const existingHookID = hooks[i].id ?? null;
+      for (let i = 0; i < data.hooks.length; i++) {
+        const active = data.hooks[i].test(value);
+        const existingHookID = data.hooks[i].id ?? null;
         if (active) {
           if (existingHookID) continue;
-          hooks[i].id = Hooks.on(hooks[i].hook, hooks[i].action);
+          data.hooks[i].id = Hooks.on(data.hooks[i].hook, data.hooks[i].action);
         } else if (existingHookID) {
-          Hooks.off(hooks[i].hook, existingHookID);
-          delete hooks[i].id;
+          Hooks.off(data.hooks[i].hook, existingHookID);
+          delete data.hooks[i].id;
         }
       }
-    }
-  }
-
-  #updateCache(key = null) {
-    for (const setting of this.#settings.keys()) {
-      if (key && key !== setting) continue;
-      const settingPath = setting.replace("_", ".");
-      const currentValue = game.settings.get(this.#module.id, setting);
-      if (game?.user) { // after setup hack
-        if (this.#isDefault(setting) === false) {
-          this.#nonDefaults.add(setting);
-        } else {
-          this.#nonDefaults.delete(setting);
-        }
-      }
-      fu.setProperty(this.#cache, settingPath, currentValue);
+      this.#settings.set(setting, data);
     }
   }
 
@@ -543,6 +481,8 @@ export class MHLSettingsManager {
   }
 
   #addResetAllButton(section) {
+    const func = `${funcPrefix}#addResetAllButton`;
+    mhlog({ section, module: this.#module.id }, { func });
     const h2 = section.querySelector("h2");
     const title = h2.innerText;
     const span = document.createElement("span");
@@ -573,6 +513,7 @@ export class MHLSettingsManager {
   }
 
   #addResetButton(div) {
+    const func = `${funcPrefix}#addResetButton`;
     const setting = div.dataset.settingId.split(".")[1];
     const label = div.querySelector("label");
     const firstInput = div.querySelector("input, select");
@@ -583,17 +524,48 @@ export class MHLSettingsManager {
     anchor.innerHTML = '<i class="fa-regular fa-arrow-rotate-left"></i>';
     anchor.dataset.tooltipDirection = "UP";
     label.append(anchor);
-    firstInput.addEventListener("change", this.#updateResetButton.bind(this));
+    firstInput.addEventListener(
+      "change",
+      function (event) {
+        this.#updateResetButton(event);
+        this.#updateResetAllButton(event);
+      }.bind(this)
+    );
     //initial check if setting === default
     firstInput.dispatchEvent(new Event("change"));
   }
 
+  #updateResetAllButton(event) {
+    const func = `${funcPrefix}#updateResetAllButton`;
+    const section = htmlClosest(event.target, "section.mhl-settings-manager");
+    const anchor = htmlQuery(section, "a[data-reset-all]");
+    const formValues = this.#getFormValues(section);
+    const existingListener = this.#resetAllListener;
+    const listener = existingListener ?? this.#onResetAllClick.bind(this);
+    // i know ?? undefined is redundant, but it'll help me remember. === false because no default returns undefined.
+    const resettables = this.#settings.filter((s) => this.#isDefault(s.key, formValues[s.key] ?? undefined) === false);
+    mhlog({ anchor, resettables, existingListener, listener }, { func: func + ` | ${this.#module.title} | ` });
+    if (!resettables.length) {
+      anchor.classList.add(this.options.disabledResetClass);
+      anchor.dataset.tooltip = localize(`${PREFIX}.ResetAll.AllDefault`);
+      anchor.removeEventListener("click", listener);
+      this.#resetAllListener = null;
+    } else {
+      anchor.classList.remove(this.options.disabledResetClass);
+      anchor.dataset.tooltip = localize(`${PREFIX}.ResetAll.Tooltip`);
+      if (!existingListener) {
+        anchor.addEventListener("click", listener);
+        this.#resetAllListener = listener;
+        mhlog("added reset-all listener");
+      }
+    }
+  }
   #updateResetButton(event) {
-    const div = event.target.closest("div[data-setting-id]");
-    const anchor = div.querySelector("a[data-reset-for]");
+    const div = htmlClosest(event.target, "div[data-setting-id]");
+    const anchor = htmlQuery(div, "a[data-reset-for]");
     const setting = anchor.dataset.resetFor;
     const settingData = this.#settings.get(setting);
-    const firstInput = div.querySelector("input, select");
+    const firstInput = htmlQuery(div, "input, select");
     const existingListener = this.#resetListeners.get(setting);
     const listener = existingListener ?? this.#onResetClick.bind(this);
     if (!existingListener) this.#resetListeners.set(setting, listener);
@@ -617,26 +589,35 @@ export class MHLSettingsManager {
   }
 
   #isDefault(setting, value = undefined) {
+    const func = `${funcPrefix}#isDefault`;
     const data = this.#settings.get(setting);
     const defaultValue = "default" in data ? data.default : undefined;
     if (defaultValue === undefined) return undefined;
     // this is to support checking if the form value = default
-    const currentValue = value === undefined ? this.get(setting) : value;
+    value = value === undefined ? this.get(setting) : value;
+    const currentValue = "type" in data ? data.type(value) : value;
     return typeof currentValue === "object"
       ? isEmpty(fu.diffObject(defaultValue, currentValue))
       : defaultValue === currentValue;
   }
 
-  async #onResetAllClick(event) {
-    const section = htmlClosest(event.target, "section.mhl-settings-manager");
+  #getFormValues(section, { visibleOnly = true } = {}) {
     const divs = htmlQueryAll(section, "div[data-setting-id]");
-    const formValues = divs.reduce((acc, curr) => {
+    return divs.reduce((acc, curr) => {
       const firstInput = htmlQuery(curr, "input, select");
-      if (!firstInput || curr.style.display === "none") return acc;
+      if (!firstInput || (visibleOnly && curr.style.display === "none")) return acc;
       const setting = curr.dataset.settingId.split(".")[1];
-      acc[setting] = this.#_value(firstInput);
+      const data = this.#settings.get(setting);
+      const inputValue = this.#_value(firstInput)
+      acc[setting] = 'type' in data ? data.type(inputValue) : inputValue;
       return acc;
     }, {});
+  }
+  async #onResetAllClick(event) {
+    const func = `${funcPrefix}#onResetAllClick`;
+    mhlog({ event, module: this.#module.id }, { func });
+    const section = htmlClosest(event.target, "section.mhl-settings-manager");
+    const formValues = this.#getFormValues(section);
     let defaultlessCount = 0;
     const defaultlessList = [];
     let areDefault = 0;
@@ -651,25 +632,18 @@ export class MHLSettingsManager {
       }
       const storedValue = this.get(setting);
       const visible = setting in formValues;
-      const currentValue = visible
-        ? formValues[setting]
-        : typeof storedValue === "object"
-        ? JSON.stringify(storedValue)
-        : storedValue;
+      const currentValue = visible ? formValues[setting] : storedValue;
+      mhlog({ setting, visible, storedValue, currentValue }, { func });
       if (this.#isDefault(setting, currentValue)) {
         areDefaultList.push(setting);
         areDefault++;
         continue;
       }
-      const defaultValue =
-        data.default === undefined
-          ? undefined
-          : typeof data.default === "object"
-          ? JSON.stringify(data.default)
-          : data.default;
+      const defaultValue = typeof data.default === "object" ? JSON.stringify(data.default) : data.default;
+      mhlog({ setting, defaultValue }, { func });
       changed[setting] = {
         config: "config" in data && data.config,
-        currentValue,
+        currentValue: typeof currentValue === "object" ? JSON.stringify(currentValue) : currentValue,
         visible,
         defaultValue,
       };
@@ -697,10 +671,10 @@ export class MHLSettingsManager {
 
   async #onResetClick(event) {
     const skipDialog = event.detail?.skipDialog ?? false;
-    const div = event.target.closest("div[data-setting-id]");
+    const div = htmlClosest(event.target, "div[data-setting-id]");
     // multiple inputs should only be for colorPickers
-    const inputs = Array.from(div.querySelectorAll("input, select"));
-    const label = div.querySelector("label");
+    const inputs = htmlQueryAll(div, "input, select");
+    const label = htmlQuery(div, "label");
     const setting = div.dataset.settingId.split(".")[1];
     const data = this.#settings.get(setting);
     const defaultValue = "default" in data ? data.default : undefined;

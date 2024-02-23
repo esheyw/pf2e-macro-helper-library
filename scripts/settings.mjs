@@ -121,17 +121,10 @@ export const SETTINGS = {
   },
 };
 
-export function setting(key, { silent = false } = {}) {
+export function setting(key) {
   const SM = MODULE()?.settingsManager;
   if (SM?.initialized && game?.user) {
-    return SM.get(key, { silent });
+    return SM.get(key);
   }
-  if (!silent)
-    mhlog(`MHL.SettingsManager.Warning.RetrievalBeforeInit`, {
-      type: "warn",
-      localize: true,
-      data: { key, module: MODULE_ID },
-      func: "setting",
-    });
   return undefined;
 }

@@ -9,7 +9,7 @@ section.mhl-settings-manager {
     // padding-top: 0.2em;
     // padding-bottom: 0.2em;
     // }
-    a[data-reset-for] {
+    a[data-reset-for], a[data-reset-all] {
       padding-left: 0.5em;
       transition: 0.5s ease-out all;
       text-shadow: var(--mhl-reset-text-shadow);
