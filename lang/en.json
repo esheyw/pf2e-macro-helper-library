@@ -151,8 +151,8 @@
         "NotAnySelected": "Must have at least one token selected{fallback}.",
         "NotOneSelected": "Must not have more than one token selected."
       },
-      "NotADocumentType":"Type {type} is not a valid type of Document.",
-      "WrongDocumentTypeRetrieved":"Document retrieved was not of type {type}.",
+      "NotADocumentType": "Type {type} is not a valid type of Document.",
+      "WrongDocumentTypeRetrieved": "Document retrieved was not of type {type}.",
       "TooEarlyForBanner": "Banner creation aborted because game isn't Ready, attempted type \"{type}\", string: \"{bannerstr}\"",
       "InvalidCamel": "I don't think {camel} is a real camel.",
       "RequiresSystem": "This macro/helper/class is only compatible with the <code>{system}</code> system.",
@@ -165,7 +165,11 @@
         "FontAwesomeIcon": "\"{string}\" failed to validate as a FontAwesome icon element."
       },
       "Type": {
-        "Array": "`{var}` must be an Array{typestr}.",
+        "Of": {
+          "TraitSlugs": " of trait slug strings",
+          "ButtonLabelStrings": " of button label strings"
+        },
+        "Array": "`{var}` must be an Array{of}.",
         "User": "`{var}` must be a User or the ID of one.",
         "Folder": "`{var}` must be a Folder document or the ID of one.",
         "Function": "`{var}` must be a Function.",

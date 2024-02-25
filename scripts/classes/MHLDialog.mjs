@@ -1,6 +1,7 @@
 import { LABELABLE_TAGS, fu } from "../constants.mjs";
 import { MHLError, localizedBanner, mhlog, log, isEmpty } from "../helpers/errorHelpers.mjs";
 import { localize } from "../helpers/stringHelpers.mjs";
+import { htmlQuery, htmlQueryAll } from "../helpers/DOMHelpers.mjs";
 const PREFIX = "MHL.Dialog";
 const funcPrefix = `MHLDialog`;
 export class MHLDialog extends Dialog {
@@ -25,8 +26,8 @@ export class MHLDialog extends Dialog {
       this.data.validator = this.#processValidatorData(data.validator);
     }
     //make sure contentData doesnt have reserved keys (just buttons and content afaict)
-    if ("contentData" in data) {
-      const contentData = data.contentData;
+    if ("contentData" in this.data) {
+      const contentData = this.data.contentData;
       const disallowedKeys = ["buttons", "content"];
       if (!Object.keys(contentData).every((k) => !disallowedKeys.includes(k))) {
         throw MHLError(
@@ -36,11 +37,20 @@ export class MHLDialog extends Dialog {
         );
       }
     }
+
+    if ("cancelButtons" in this.data) {
+      const cancelButtons = this.data.cancelButtons;
+      if (!Array.isArray(cancelButtons) || !cancelButtons.every((b) => typeof b === "string")) {
+        throw MHLError(
+          `MHL.Error.Type.Array`,
+          { var: "cancelButtons", of: localize(`MHL.Error.Type.Of.ButtonLabelStrings`) },
+          { func, log: { cancelButtons } }
+        );
+      }
+    }
+    this.data.cancelButtons ??= ["no", "cancel"];
   }
-  #_value(input) {
-    //grr checkboxen
-    return input?.type === "checkbox" ? input.checked : input.value;
-  }
+
   #processValidatorData(validator) {
     switch (typeof validator) {
       case "function":
@@ -99,9 +109,7 @@ export class MHLDialog extends Dialog {
   }
 
   submit(button, event) {
-    mhlog({ button, event, app: this }, { func: `${funcPrefix}#submit` });    
-    const nos = ['no', 'cancel'];
-    if (nos.includes(event.currentTarget.dataset.button) || this.#_validate()) {
+    if (this.data.cancelButtons.includes(event.currentTarget.dataset.button) || this.#_validate()) {
       super.submit(button, event);
     } else {
       return false;
@@ -217,10 +225,10 @@ export class MHLDialog extends Dialog {
 
   static getLabelMap(html) {
     html = html instanceof jQuery ? html[0] : html;
-    const named = html.querySelectorAll("[name][id]");
+    const named = htmlQueryAll(html, "[name][id]");
     if (!named.length) return {};
-    const namedIDs = Array.from(named).map((e) => e.getAttribute("id"));
-    const allLabels = Array.from(html.querySelectorAll("label"));
+    const namedIDs = named.map((e) => e.getAttribute("id"));
+    const allLabels = htmlQueryAll(html, "label");
     if (!allLabels.length) return {};
     return allLabels.reduce((acc, curr) => {
       const forAttr = curr.getAttribute("for");
@@ -228,7 +236,7 @@ export class MHLDialog extends Dialog {
         if (!namedIDs.includes(forAttr)) return acc;
         acc[curr.getAttribute("name")] = curr.innerText;
       } else {
-        const labelableChild = curr.querySelector(LABELABLE_TAGS.map((t) => `${t}[name]`).join(", "));
+        const labelableChild = htmlQuery(curr, LABELABLE_TAGS.map((t) => `${t}[name]`).join(", "));
         if (!labelableChild) return acc;
         acc[labelableChild.getAttribute("name")] = curr.innerText;
       }

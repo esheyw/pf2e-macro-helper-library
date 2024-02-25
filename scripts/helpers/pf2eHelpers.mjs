@@ -190,7 +190,7 @@ function generateTraitsFlavour(traits = []) {
   if (!Array.isArray(traits)) {
     throw MHLError(
       `MHL.Error.Type.Array`,
-      { var: "traits", typestr: " of trait slug strings" },
+      { var: "traits", of: localize(`MHL.Error.Type.Of.TraitSlugs`) },
       { func: "generateTraitsFlavour: ", log: { traits } }
     );
   }

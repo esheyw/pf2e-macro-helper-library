@@ -13,7 +13,7 @@ export const SETTINGS = {
       warn: null,
       error: null,
     },
-    default: "debug",
+    default: "warn",
     scope: "world",
   },
   "test-setting": {
@@ -86,7 +86,7 @@ export const SETTINGS = {
   },
   "global-access": {
     config: true,
-    default: false,
+    default: true,
     type: Boolean,
     hint: null,
     name: null,

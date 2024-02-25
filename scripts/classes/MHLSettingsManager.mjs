@@ -52,7 +52,6 @@ export class MHLSettingsManager {
     if (!clientSettings.length && !isRealGM(game.user)) return;
     const moduleSection = htmlQuery(html, `section[data-category="${this.#module.id}"]`);
     moduleSection.classList.add("mhl-settings-manager");
-    mhlog({ app, html, data });
     if (this.options.resetButtons) {
       this.#addResetAllButton(moduleSection);
     }
@@ -433,7 +432,7 @@ export class MHLSettingsManager {
     const regex = new RegExp(pattern);
     const settingName = div.dataset.settingId.split(".")[1];
     const defaultValue = game.settings.settings.get(div.dataset.settingId).default;
-    const textInput = div.querySelector('input[type="text"]');
+    const textInput = htmlQuery(div, 'input[type="text"]');
     if (!textInput || !regex.test(defaultValue)) return undefined;
     const colorPicker = document.createElement("input");
     colorPicker.type = "color";
@@ -464,7 +463,7 @@ export class MHLSettingsManager {
     });
   }
   #replaceWithButton(div, data) {
-    const input = div.querySelector(".form-fields").children[0];
+    const input = htmlQuery(div, ".form-fields").children[0];
     div.classList.add("submenu");
     const button = document.createElement("button");
     button.innerHTML = `${data.icon} <label>${localize(data.label)}</label>`;
@@ -475,8 +474,8 @@ export class MHLSettingsManager {
   }
 
   #addVisibilityListener(div, data) {
-    const controlDiv = div.parentElement.querySelector(`[data-setting-id$="${data.dependsOn}"]`);
-    const controlElement = controlDiv.querySelector("input, select");
+    const controlDiv = htmlQuery(div.parentElement, `[data-setting-id$="${data.dependsOn}"]`);
+    const controlElement = htmlQuery(controlDiv, "input, select");
     this.#visibilityControlElements.add(controlElement);
     controlElement.addEventListener("change", (event) => {
       div.style.display = data.test(this.#_value(event.target)) ? "flex" : "none";
@@ -485,41 +484,20 @@ export class MHLSettingsManager {
 
   #addResetAllButton(section) {
     const func = `${funcPrefix}#addResetAllButton`;
-    mhlog({ section, module: this.#module.id }, { func });
-    const h2 = section.querySelector("h2");
-    const title = h2.innerText;
+    const h2 = htmlQuery(section, "h2");
     const span = document.createElement("span");
     span.classList.add("mhl-reset-all");
     span.innerHTML = `<a data-reset-all="${this.#module.id}"><i class="fa-regular fa-reply-all"></i></a>`;
-    const anchor = span.querySelector("a");
-    anchor.addEventListener(
-      "click",
-      // async (event) => {
-      //   const section = event.target.closest("section");
-      //   const resetButtons = Array.from(section.querySelectorAll("a[data-reset-for]"));
-      //   const doReset = await Dialog.confirm({
-      //     defaultYes: false,
-      //     title: localize(`${PREFIX}.ResetAll.Title`),
-      //     content: localize(`${PREFIX}.ResetAll.Body`, {
-      //       module: title,
-      //       count: resetButtons.filter((b) => !b.classList.value.includes("disabled")).length,
-      //     }),
-      //   });
-      //   if (!doReset) return undefined;
-      //   for (const button of resetButtons) {
-      //     button.dispatchEvent(new CustomEvent("click", { detail: { skipDialog: true } }));
-      //   }
-      // }
-      this.#onResetAllClick.bind(this)
-    );
+    const anchor = htmlQuery(span, "a");
+    anchor.addEventListener("click", this.#onResetAllClick.bind(this));
     h2.appendChild(span);
   }
 
   #addResetButton(div) {
     const func = `${funcPrefix}#addResetButton`;
     const setting = div.dataset.settingId.split(".")[1];
-    const label = div.querySelector("label");
-    const firstInput = div.querySelector("input, select");
+    const label = htmlQuery(div, "label");
+    const firstInput = htmlQuery(div, "input, select");
     if (!firstInput) return undefined; // something's gone wrong or its a settings menu
     // only time there should be more than one input per div is colorpickers, and they'll update the text field anyway.
     const anchor = document.createElement("a");
@@ -543,10 +521,11 @@ export class MHLSettingsManager {
     const section = htmlClosest(event.target, "section.mhl-settings-manager");
     const anchor = htmlQuery(section, `a[data-reset-all="${this.#module.id}"]`);
     const formValues = this.#getFormValues(section);
+    const isGM = isRealGM(game.user);
     this.#resetAllListener.listener ??= this.#onResetAllClick.bind(this);
-    // i know ?? undefined is redundant, but it'll help me remember. === false because no default returns undefined.
-    const resettables = this.#settings.filter((s) => this.#isDefault(s.key, formValues[s.key] ?? undefined) === false);
-    mhlog({ anchor, resettables }, { func: func + ` | ${this.#module.title} | ` });
+    // I know ?? undefined is redundant, but it'll help me remember. === false because no default returns undefined.
+    // also check for GM status for world settings
+    const resettables = this.#settings.filter((s) => (s?.scope === 'world' ? isGM : true) && this.#isDefault(s.key, formValues[s.key] ?? undefined) === false);
     if (!resettables.length) {
       anchor.classList.add(this.options.disabledResetClass);
       anchor.dataset.tooltip = localize(`${PREFIX}.ResetAll.AllDefault`);
@@ -618,7 +597,6 @@ export class MHLSettingsManager {
   }
   async #onResetAllClick(event) {
     const func = `${funcPrefix}#onResetAllClick`;
-    mhlog({ event, module: this.#module.id }, { func });
     const section = htmlClosest(event.target, "section.mhl-settings-manager");
     const formValues = this.#getFormValues(section);
     let defaultlessCount = 0;
@@ -626,8 +604,10 @@ export class MHLSettingsManager {
     let areDefault = 0;
     const areDefaultList = [];
     const changed = {};
+    const isGM = isRealGM(game.user)
     for (const [setting, data] of this.#settings.entries()) {
       if ("button" in data) continue;
+      if (data?.scope === 'world' && !isGM) continue;
       if (!("default" in data)) {
         defaultlessList.push(setting);
         defaultlessCount++;
@@ -636,19 +616,17 @@ export class MHLSettingsManager {
       const storedValue = this.get(setting);
       const visible = setting in formValues;
       const currentValue = visible ? formValues[setting] : storedValue;
-      mhlog({ setting, visible, storedValue, currentValue }, { func });
       if (this.#isDefault(setting, currentValue)) {
         areDefaultList.push(setting);
         areDefault++;
         continue;
       }
-      const defaultValue = typeof data.default === "object" ? JSON.stringify(data.default) : data.default;
-      mhlog({ setting, defaultValue }, { func });
+      //make the object settings presentable by stringifying
       changed[setting] = {
         config: "config" in data && data.config,
         currentValue: typeof currentValue === "object" ? JSON.stringify(currentValue) : currentValue,
         visible,
-        defaultValue,
+        defaultValue: typeof data.default === "object" ? JSON.stringify(data.default) : data.default,
       };
     }
 
@@ -669,8 +647,23 @@ export class MHLSettingsManager {
       classes: ["mhl-reset-all"],
       width: 700,
     };
-    mhlog(dialogData);
-    mhlog(await MHLDialog.confirm(dialogData, dialogOptions));
+    // mhlog(dialogData);
+    const doReset = await MHLDialog.confirm(dialogData, dialogOptions);
+    if (!doReset) return;
+    for (const [setting,data] of Object.entries(changed)) {
+      const div = htmlQuery(section, `div[data-setting-id$="${setting}"]`);
+      const inputs = htmlQueryAll(div, 'input, select')
+      for (const input of inputs) {
+        //grr checkboxen
+        if (input.tagName === "INPUT" && input.type === "checkbox") {
+          input.checked = data.defaultValue;
+        }
+        input.value = data.defaultValue;
+        input.dispatchEvent(new Event("change")); //to force visibility updates
+      }
+      this.reset(setting)
+    }
+    this.#updateResetAllButton(event);
   }
 
   async #onResetClick(event) {
