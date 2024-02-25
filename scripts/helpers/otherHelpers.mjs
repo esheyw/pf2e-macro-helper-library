@@ -29,31 +29,75 @@ export function isOwnedBy(doc, user) {
   return false;
 }
 
-export function doc(input, type, parent=null) {
-  let doc; 
-  parent ??= game;
-  if (typeof type === 'string') type = getDocumentClass(type);
-  if (typeof type !== 'function') return undefined;
-  if (input instanceof type) return input;
+export function doc(input, type = null, { parent = null, returnIndex = false, async = false } = {}) {
+  const func = `doc`;
+  let document;
+  if (type === true) async = true; // kinda gross?
+  if (typeof type === "string") type = getDocumentClass(type);
+  const requireType = (type) => {
+    if (typeof type !== "function" || !(type.prototype instanceof foundry.abstract.DataModel)) {
+      mhlog(
+        { input, type, parent },
+        {
+          localize: true,
+          func,
+          prefix: `MHL.Error.NotADocumentType`,
+          data: { type: typeof type === "function" ? type.prototype.constructor.name : String(type) },
+        }
+      );
+      return false;
+    }
+    return true;
+  };
+  const wrongType = (checkedDoc, type) => {
+    if (!(checkedDoc instanceof type)) {
+      mhlog(
+        { input, type, parent },
+        {
+          localize: true,
+          func,
+          prefix: `MHL.Error.WrongDocumentTypeRetrieved`,
+          data: { type: typeof type === "function" ? type.prototype.constructor.name : String(type) },
+        }
+      );
+      return true;
+    }
+    return false;
+  };
   if (typeof input === "string") {
-    if (input.startsWith('Compendium')) {
-      doc = fromUuidSync(input);
-      if (doc instanceof type) return doc;
+    const parsed = fu.parseUuid(input, { relative: parent });
+    if (parsed?.collection instanceof CompendiumCollection) {
+      const cached = parsed.collection.contents.find((d) => d._id === parsed.documentId);
+      if (cached) {
+        if (parsed.embedded.length) {
+          return doc("." + input.split(".").slice(5).join("."), type, { parent: cached });
+        }
+        if (type && wrongType(cached, type)) return undefined;
+        return cached;
+      }
+      if (async) return fromUuid(input);
+      if (returnIndex && !parsed.embedded.length) return parsed.collection.index.get(parsed.documentId);
       return undefined;
+    } else if (parsed?.collection instanceof WorldCollection) {
+      document = fromUuidSync(input);
+      if (type && wrongType(document, type)) return undefined;
+      return document;
+    } else if (parsed?.doc) {
+      document = parsed.doc;
+      for (let i = 0; i < parsed.embedded.length; i += 2) {
+        document = document[getDocumentClass(parsed.embedded[i]).collectionName].get(parsed.embedded[i + 1]);
+      }
+      if (type && wrongType(document, type)) return undefined;
+      return document;
+    } else {
+      if (!requireType(type)) return undefined;
+      const collection = (parent ?? game)[type.collectionName];
+      document = collection.get(input) ?? document.getName(input);
     }
-    if (/^[A-Z][a-z]+(\.[-a-zA-Z0-9])+/.test(input)) {
-      doc = fromUuidSync(input);
-      if (doc instanceof type) return doc;
-    }
-    const collection = parent[type.collectionName] 
-    if (/^[a-z0-9]{16}$/i.test(input)) {
-      doc = collection.get(input);
-      if (doc instanceof type) return doc;
-    }
-    doc = collection.getName(input);
-    if (doc instanceof type) return doc;
   }
-  return undefined;
+  if (!requireType(type)) return undefined;
+  document ??= input;
+  return document instanceof type ? document : undefined;
 }
 
 export function isRealGM(user) {
@@ -63,9 +107,9 @@ export function isRealGM(user) {
 }
 
 export function activeRealGM() {
-  const activeRealGMs = game.users.filter(u=> u.active && isRealGM(u));
-  activeRealGMs.sort((a, b) => a.id > b.id ? 1 : -1);
-  return activeRealGMs[0] || null
+  const activeRealGMs = game.users.filter((u) => u.active && isRealGM(u));
+  activeRealGMs.sort((a, b) => (a.id > b.id ? 1 : -1));
+  return activeRealGMs[0] || null;
 }
 export async function pickAThingDialog({ things = null, title = null, thingType = "Item", dialogOptions = {} } = {}) {
   const PREFIX = "MHL.PickAThing";

@@ -89,4 +89,4 @@
 - Moved documentation from the README to [github wiki](https://github.com/esheyw/pf2e-macro-helper-library/wiki/Interim-API-Reference/)
 - Added actual macros in the Helper Library Macros compendium for the existing macros.
   - Included icons for several of them from [game-icons.net](https://game-icons.net)
-- Implemented the `doc`, `isRealGm`, and `activeRealGm` Other Helpers
+- Implemented the `doc`, `isRealGM`, and `activeRealGM` Other Helpers

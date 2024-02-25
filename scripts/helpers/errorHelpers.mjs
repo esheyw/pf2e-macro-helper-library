@@ -133,7 +133,7 @@ export function isPF2e() {
 }
 
 export function requireSystem(system, prefix = null) {
-  if (game.system.id !== system) throw localizedError(`MHL.Error.RequiresSystem`, { system }, { prefix });
+  if (game.system.id !== system) throw localizedError(`MHL.Error.RequiresSystem`, { system }, { prefix, banner: true });
 }
 
 // taken from https://stackoverflow.com/a/32728075, slightly modernized

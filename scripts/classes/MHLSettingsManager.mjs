@@ -13,7 +13,10 @@ export class MHLSettingsManager {
   #visibilityControlElements = new Set();
   #nonDefaults = new Set();
   #resetListeners = new Map();
-  #resetAllListener;
+  #resetAllListener = {
+    listener: null,
+    active: false,
+  };
   #hooks = {};
   #initialized = false;
 
@@ -49,7 +52,7 @@ export class MHLSettingsManager {
     if (!clientSettings.length && !isRealGM(game.user)) return;
     const moduleSection = htmlQuery(html, `section[data-category="${this.#module.id}"]`);
     moduleSection.classList.add("mhl-settings-manager");
-    mhlog({app,html,data})
+    mhlog({ app, html, data });
     if (this.options.resetButtons) {
       this.#addResetAllButton(moduleSection);
     }
@@ -487,7 +490,7 @@ export class MHLSettingsManager {
     const title = h2.innerText;
     const span = document.createElement("span");
     span.classList.add("mhl-reset-all");
-    span.innerHTML = `<a data-reset-all="true"><i class="fa-regular fa-reply-all"></i></a>`;
+    span.innerHTML = `<a data-reset-all="${this.#module.id}"><i class="fa-regular fa-reply-all"></i></a>`;
     const anchor = span.querySelector("a");
     anchor.addEventListener(
       "click",
@@ -538,25 +541,25 @@ export class MHLSettingsManager {
   #updateResetAllButton(event) {
     const func = `${funcPrefix}#updateResetAllButton`;
     const section = htmlClosest(event.target, "section.mhl-settings-manager");
-    const anchor = htmlQuery(section, "a[data-reset-all]");
+    const anchor = htmlQuery(section, `a[data-reset-all="${this.#module.id}"]`);
     const formValues = this.#getFormValues(section);
-    const existingListener = this.#resetAllListener;
-    const listener = existingListener ?? this.#onResetAllClick.bind(this);
+    this.#resetAllListener.listener ??= this.#onResetAllClick.bind(this);
     // i know ?? undefined is redundant, but it'll help me remember. === false because no default returns undefined.
     const resettables = this.#settings.filter((s) => this.#isDefault(s.key, formValues[s.key] ?? undefined) === false);
-    mhlog({ anchor, resettables, existingListener, listener }, { func: func + ` | ${this.#module.title} | ` });
+    mhlog({ anchor, resettables }, { func: func + ` | ${this.#module.title} | ` });
     if (!resettables.length) {
       anchor.classList.add(this.options.disabledResetClass);
       anchor.dataset.tooltip = localize(`${PREFIX}.ResetAll.AllDefault`);
-      anchor.removeEventListener("click", listener);
-      this.#resetAllListener = null;
+      if (this.#resetAllListener.active) {
+        anchor.removeEventListener("click", this.#resetAllListener.listener);
+      }
+      this.#resetAllListener.active = false;
     } else {
       anchor.classList.remove(this.options.disabledResetClass);
       anchor.dataset.tooltip = localize(`${PREFIX}.ResetAll.Tooltip`);
-      if (!existingListener) {
-        anchor.addEventListener("click", listener);
-        this.#resetAllListener = listener;
-        mhlog("added reset-all listener");
+      if (!this.#resetAllListener.active) {
+        anchor.addEventListener("click", this.#resetAllListener);
+        this.#resetAllListener.active = true;
       }
     }
   }
@@ -608,8 +611,8 @@ export class MHLSettingsManager {
       if (!firstInput || (visibleOnly && curr.style.display === "none")) return acc;
       const setting = curr.dataset.settingId.split(".")[1];
       const data = this.#settings.get(setting);
-      const inputValue = this.#_value(firstInput)
-      acc[setting] = 'type' in data ? data.type(inputValue) : inputValue;
+      const inputValue = this.#_value(firstInput);
+      acc[setting] = "type" in data ? data.type(inputValue) : inputValue;
       return acc;
     }, {});
   }
@@ -653,6 +656,7 @@ export class MHLSettingsManager {
       title: localize(`${PREFIX}.ResetAll.Title`),
       content: `modules/${MODULE_ID}/templates/MHLSettingsManager-ResetAll.hbs`,
       contentData: {
+        isGM: isRealGM(game.user),
         module: this.#module.title,
         defaultlessCount,
         defaultlessTooltip: defaultlessList.join(", "),

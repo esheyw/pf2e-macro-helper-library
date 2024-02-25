@@ -9,7 +9,7 @@
     "IsDefault": "Is Default",
     "NotApplicable": "N/A",
     "SetTo": "Set To",
-    "Visible":"Visible",
+    "Visible": "Visible",
     "Grammar": {
       "Articles": {
         "An": "an",
@@ -141,7 +141,7 @@
       }
     },
     "Error": {
-      "UnsupportedDocument":"Document type {type} not supported by this function.",
+      "UnsupportedDocument": "Document type {type} not supported by this function.",
       "Target": {
         "NotOneTargetted": "Must have exactly one token targetted.",
         "NotAnyTargetted": "Must have at least one token targetted."
@@ -151,7 +151,8 @@
         "NotAnySelected": "Must have at least one token selected{fallback}.",
         "NotOneSelected": "Must not have more than one token selected."
       },
-      "StringFailedValidation": " {type}",
+      "NotADocumentType":"Type {type} is not a valid type of Document.",
+      "WrongDocumentTypeRetrieved":"Document retrieved was not of type {type}.",
       "TooEarlyForBanner": "Banner creation aborted because game isn't Ready, attempted type \"{type}\", string: \"{bannerstr}\"",
       "InvalidCamel": "I don't think {camel} is a real camel.",
       "RequiresSystem": "This macro/helper/class is only compatible with the <code>{system}</code> system.",
@@ -179,10 +180,10 @@
         "FirstTarget": "This operation requires a single target, using first target \"{name}\".",
         "FirstToken": "This operation requires a single selected token, using first token \"{name}\".",
         "LogType": "Provided log type \"{type}\" is not valid, defaulting to \"{defaultType}\".",
-        "Type": "Expected parameter \"{var}\" to be of type \"{expected}\", not \"{type}\". Casting."
+        "Type": "Expected parameter \"{var}\" to be of type \"{expected}\", not \"{type}\". Casting.",
+        "LevelOutOfBounds": "Provided level ({level}) out of bounds! Defaulting to level 25."
       },
-      "SystemBelowVerified": "Your system version ({version}) is older than what Macro & Helper Library is verified for ({verified}). This may cause things to break, or might not; No guarantees.",
-      "LevelOutOfBounds": "Provided level ({level}) out of bounds! Defaulting to level 25."
+      "SystemBelowVerified": "Your system version ({version}) is older than what Macro & Helper Library is verified for ({verified}). This may cause things to break, or might not; No guarantees."
     },
     "Setting": {
       "LogLevel": {

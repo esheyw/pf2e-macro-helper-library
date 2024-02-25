@@ -35,16 +35,13 @@ Hooks.on("init", () => {
   //special exposure
   mod.api.mhlSetting = setting;
   mod.api.sm = mod.settingsManager;
-  helpers.mhlog('test', {func: 'init'})
 });
 Hooks.once("i18nInit", () => {
-  helpers.mhlog('test', {func: 'i18nInit'})
   const mod = MODULE();
   mod.settingsManager.registerSettings(SETTINGS);
 
 });
 Hooks.once("setup", () => {
-  helpers.mhlog('test', {func: 'setup'})
   const mod = MODULE();
   if (setting("legacy-access")) game.pf2emhl = mod.api;
   if (setting("global-access")) globalThis.mhl = mod.api;

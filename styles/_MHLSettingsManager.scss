@@ -4,31 +4,32 @@ section.mhl-settings-manager {
     text-align: right;
     padding-right: 0.2em;
   }
+  a[data-reset-for],
+  a[data-reset-all] {
+    padding-left: 0.5em;
+    transition: 0.5s ease-out all;
+    text-shadow: var(--mhl-reset-text-shadow);
+    &.disabled-blurry {
+      filter: blur(2px);
+      cursor: not-allowed;
+    }
+
+    &.disabled-hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    &.disabled-transparent {
+      opacity: 0.25;
+      pointer-events: none;
+    }
+  }
+
   [data-setting-id] {
     // .mhl-settings-button {
     // padding-top: 0.2em;
     // padding-bottom: 0.2em;
     // }
-    a[data-reset-for], a[data-reset-all] {
-      padding-left: 0.5em;
-      transition: 0.5s ease-out all;
-      text-shadow: var(--mhl-reset-text-shadow);
-      &.disabled-blurry {
-        filter: blur(2px);
-        cursor: not-allowed;
-      }
-
-      &.disabled-hidden {
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      &.disabled-transparent {
-        opacity: 0.25;
-        pointer-events: none;
-      }
-    }
-
     input[type="color"] {
       max-width: 20%;
     }
@@ -46,7 +47,8 @@ section.mhl-settings-manager {
   }
   td {
     font-weight: bold;
-    min-width: fit-content;
+    text-align: center;
+
   }
   td:is(.config-true, .has-default-true, .is-default-true) {
     color: var(--mhl-color-success);
