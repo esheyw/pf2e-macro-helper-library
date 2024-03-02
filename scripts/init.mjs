@@ -51,7 +51,7 @@ Hooks.once("ready", () => {
   const verifiedFor = VERIFIED_SYSTEM_VERSIONS[game.system.id] ?? false;
   if (verifiedFor && !fu.isNewerVersion(game.system.version, verifiedFor))
     helpers.MHLBanner(`MHL.Warning.SystemBelowVerified`, {
-      data: { version: game.system.version, verified: verifiedFor },
+      context: { version: game.system.version, verified: verifiedFor },
       type: "warn",
       permanent: true,
     });

@@ -98,7 +98,7 @@ export class MHLSettingsManager {
       if (game.settings.settings.get(`${this.#module.id}.${key}`) === undefined) {
         mhlog(`${PREFIX}.Error.NotRegistered`, {
           type: "error",
-          data: { key, module: this.#module.id },
+          context: { key, module: this.#module.id },
           localize: true,
           func,
         });
@@ -148,7 +148,7 @@ export class MHLSettingsManager {
     if (!settings) {
       mhlog(`${PREFIX}.Error.NoValidSettings`, {
         type: "error",
-        data: { module: this.#module.id },
+        context: { module: this.#module.id },
         localize: true,
         func,
       });
@@ -167,7 +167,7 @@ export class MHLSettingsManager {
               localize: true,
               prefix: `${PREFIX}.Error.InvalidSettingData`,
               func,
-              data: { setting, module: this.#module.id },
+              context: { setting, module: this.#module.id },
             }
           );
           continue;
@@ -193,7 +193,7 @@ export class MHLSettingsManager {
               localize: true,
               prefix: `${PREFIX}.Error.InvalidSettingData`,
               func,
-              data: { setting, module: this.#module.id },
+              context: { setting, module: this.#module.id },
             }
           );
         }
@@ -262,7 +262,7 @@ export class MHLSettingsManager {
       mhlog(`${PREFIX}.Error.DuplicateSetting`, {
         type: "error",
         localize: true,
-        data: { setting, module: this.#module.id },
+        context: { setting, module: this.#module.id },
         func,
       });
       return false;
@@ -373,7 +373,7 @@ export class MHLSettingsManager {
         type: "error",
         localize: true,
         prefix: `${PREFIX}.Error.Visibility.UnknownDependency`,
-        data: { dependsOn, setting, module: this.#module.id },
+        context: { dependsOn, setting, module: this.#module.id },
         func,
       });
       return false;
@@ -409,7 +409,7 @@ export class MHLSettingsManager {
             type: "error",
             localize: true,
             prefix: errorstr,
-            data: { setting, hook: hookData?.hook, module: this.#module.id },
+            context: { setting, hook: hookData?.hook, module: this.#module.id },
             func,
           }
         );
@@ -533,9 +533,12 @@ export class MHLSettingsManager {
     const controlDiv = htmlQuery(div.parentElement, `[data-setting-id$="${data.dependsOn}"]`);
     const controlElement = htmlQuery(controlDiv, "input, select");
     this.#visibilityControlElements.add(controlElement);
-    controlElement.addEventListener("change", (event) => {
-      div.style.display = data.test(this.#_value(event.target)) ? "flex" : "none";
-    });
+    controlElement.addEventListener("change", function (event) {
+      const savedValue = this.get(controlDiv.dataset.settingId.split('.')[1]);
+      const formValue = this.#_value(event.target)
+      const visible = div.style.display === "none" ? false : true;
+      div.style.display = data.test(formValue, savedValue, visible) ? "flex" : "none";
+    }.bind(this));
   }
 
   #addResetAllButton(section) {
@@ -758,7 +761,7 @@ export class MHLSettingsManager {
       mhlog(`${PREFIX}.Error.NotRegistered`, {
         type: "error",
         localize: true,
-        data: { setting, module: this.#module.id },
+        context: { setting, module: this.#module.id },
         func,
       });
       return false;

@@ -17,7 +17,7 @@ export async function applyOwnshipToFolderStructure(root, exemplar) {
 export function getIDsFromFolder(root) {
   if (!(root instanceof Folder)) {
     if (typeof root === "string") root = game.folders.get(root);
-    if (!root) throw MHLError("MHL.Error.Type.Folder", { data: { var: "root" }, func: "getIDsFromFolder" });
+    if (!root) throw MHLError("MHL.Error.Type.Folder", { context: { var: "root" }, func: "getIDsFromFolder" });
   }
   return root.contents.concat(root.getSubfolders(true).flatMap((f) => f.contents)).map((c) => c.id);
 }
@@ -42,7 +42,7 @@ export function doc(input, type = null, { parent = null, returnIndex = false, as
           localize: true,
           func,
           prefix: `MHL.Error.NotADocumentType`,
-          data: { type: typeof type === "function" ? type.prototype.constructor.name : String(type) },
+          context: { type: typeof type === "function" ? type.prototype.constructor.name : String(type) },
         }
       );
       return false;
@@ -57,7 +57,7 @@ export function doc(input, type = null, { parent = null, returnIndex = false, as
           localize: true,
           func,
           prefix: `MHL.Error.WrongDocumentTypeRetrieved`,
-          data: { type: typeof type === "function" ? type.prototype.constructor.name : String(type) },
+          context: { type: typeof type === "function" ? type.prototype.constructor.name : String(type) },
         }
       );
       return true;

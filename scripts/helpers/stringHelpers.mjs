@@ -8,7 +8,7 @@ export function getLogPrefix(text, options = {}) {
     mhlog(`MHL.Warning.Fallback.Type`, {
       func: `getLogPrefix`,
       localize: true,
-      data: { var: "text", type: typeof text, expected: "string" },
+      context: { var: "text", type: typeof text, expected: "string" },
     });
     text = String(text);
   }
@@ -27,7 +27,7 @@ export function prependIndefiniteArticle(text) {
     mhlog(`MHL.Warning.Fallback.Type`, {
       func: "prependIndefiniteArticle",
       localize: true,
-      data: { var: "text", type: typeof text, expected: "string" },
+      context: { var: "text", type: typeof text, expected: "string" },
     });
     text = String(text);
   }
@@ -43,7 +43,7 @@ export function localize(text, data = {}, { defaultEmpty = true } = {}) {
     mhlog(`MHL.Warning.Fallback.Type`, {
       func: "localize",
       localize: true,
-      data: { var: "text", type: typeof text, expected: "string" },
+      context: { var: "text", type: typeof text, expected: "string" },
     });
     text = String(text);
   }
@@ -78,7 +78,7 @@ export function sluggify(text, { camel = null } = {}) {
     mhlog(`MHL.Warning.Fallback.Type`, {
       func: "sluggify",
       localize: true,
-      data: { var: "text", type: typeof text, expected: "string" },
+      context: { var: "text", type: typeof text, expected: "string" },
     });
     text = String(text);
   }
@@ -103,7 +103,7 @@ export function sluggify(text, { camel = null } = {}) {
         .replace(upperOrWordBoundariedLowerRE, (part, index) => (index === 0 ? part.toLowerCase() : part.toUpperCase()))
         .replace(/\s+/g, "");
     default:
-      throw MHLError(`MHL.Error.InvalidCamel`, { data: { camel }, log: { camel }, func: "sluggify" });
+      throw MHLError(`MHL.Error.InvalidCamel`, { context: { camel }, log: { camel }, func: "sluggify" });
   }
 }
 
@@ -112,7 +112,7 @@ export function getIconString(input, { classesOnly = false } = {}) {
   if (typeof input !== "string") {
     mhlog(`MHL.Warning.Fallback.Type`, {
       localize: true,
-      data: { var: "string", expected: "string", type: typeof input },
+      context: { var: "string", expected: "string", type: typeof input },
       func,
     });
     input = String(input);
@@ -122,7 +122,7 @@ export function getIconString(input, { classesOnly = false } = {}) {
   const containsHTML = /<[^>]+>/.test(input);
   const matches = new RegExp(`(${pre})([-a-z0-9\s]+)(${post})`).exec(input);
   if (containsHTML && !matches) {
-    mhlog(`MHL.Error.Validation.FontAwesomeIcon`, { localize: true, data: { string: input }, func });
+    mhlog(`MHL.Error.Validation.FontAwesomeIcon`, { localize: true, context: { string: input }, func });
     return "";
   }
   const classes = matches ? getIconClasses(matches[2]) : getIconClasses(input);
@@ -135,7 +135,7 @@ export function getIconClasses(input) {
   if (typeof input !== "string") {
     mhlog(`MHL.Warning.Fallback.Type`, {
       localize: true,
-      data: { var: "string", expected: "string", type: typeof input },
+      context: { var: "string", expected: "string", type: typeof input },
       func,
     });
     input = String(input);
@@ -164,7 +164,7 @@ export function getIconClasses(input) {
     }
   }
   if (!partsSeen.slug) {
-    mhlog(`MHL.Error.Validation.FontAwesomeClasses`, { localize: true, data: { string: input }, func });
+    mhlog(`MHL.Error.Validation.FontAwesomeClasses`, { localize: true, context: { string: input }, func });
     return false;
   }
   return [partsSeen.sharp ?? "", partsSeen.type ?? "fa-regular", partsSeen.slug].join(" ").trim();

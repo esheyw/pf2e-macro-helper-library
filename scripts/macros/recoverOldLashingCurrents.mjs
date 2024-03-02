@@ -11,7 +11,7 @@ export async function recoverOldLashingCurrents() {
     errorIfEmpty: false,
   });
   if (!existingLC) {
-    throw MHLError("MHL.Macros.LashingCurrents.Error.NoExistingFound", { data: { name: token.name }, func });
+    throw MHLError("MHL.Macros.LashingCurrents.Error.NoExistingFound", { context: { name: token.name }, func });
   }
   let originalRelicWeaponData = JSON.parse(existingLC.flags.pf2e.originalRelicWeapon);
 

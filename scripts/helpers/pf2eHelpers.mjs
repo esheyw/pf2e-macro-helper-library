@@ -6,7 +6,7 @@ import { prependIndefiniteArticle } from "./stringHelpers.mjs";
 export function levelBasedDC(level) {
   const func = "levelBasedDC";
   if (typeof level !== "number") {
-    throw MHLError(`MHL.Error.Type.Number`, { data: { var: "level" }, func, log: { level } });
+    throw MHLError(`MHL.Error.Type.Number`, { context: { var: "level" }, func, log: { level } });
   }
   const DCByLevel = [
     14, 15, 16, 18, 19, 20, 22, 23, 24, 26, 27, 28, 30, 31, 32, 34, 35, 36, 38, 39, 40, 42, 44, 46, 48, 50,
@@ -44,7 +44,7 @@ export async function pickItemFromActor(
     filteredItems = actor.items.filter((i) => i.type === itemType) ?? [];
   }
   if (!filteredItems.length) {
-    if (errorIfEmpty) throw MHLError(`MHL.Error.NoItemsOfType`, { data: { itemType } });
+    if (errorIfEmpty) throw MHLError(`MHL.Error.NoItemsOfType`, { context: { itemType } });
     return null;
   }
 
@@ -113,13 +113,13 @@ export async function getAllFromAllowedPacks({
 
   const originalType = type;
   if (!validTypes.includes(type) && !validTypes.includes((type = aliases[type] ?? ""))) {
-    throw MHLError(`MHL.Error.InvalidType`, { data: { type: originalType }, func });
+    throw MHLError(`MHL.Error.InvalidType`, { context: { type: originalType }, func });
   }
   if (!Array.isArray(fields) || (fields.length && fields.some((f) => typeof f !== "string"))) {
     throw MHLError(`MHL.Error.FieldsFormat`, { func, log: { fields } });
   }
   if (filter && typeof filter !== "function") {
-    throw MHLError(`MHL.Error.Type.Function`, { data: { var: "filter" }, func, log: { filter } });
+    throw MHLError(`MHL.Error.Type.Function`, { context: { var: "filter" }, func, log: { filter } });
   }
 
   //initialize the sources list if it hasn't been set
@@ -189,7 +189,7 @@ export async function getAllFromAllowedPacks({
 function generateTraitsFlavour(traits = []) {
   if (!Array.isArray(traits)) {
     throw MHLError(`MHL.Error.Type.Array`, {
-      data: { var: "traits", of: localize(`MHL.Error.Type.Of.TraitSlugs`) },
+      context: { var: "traits", of: localize(`MHL.Error.Type.Of.TraitSlugs`) },
       func: "generateTraitsFlavour: ",
       log: { traits },
     });

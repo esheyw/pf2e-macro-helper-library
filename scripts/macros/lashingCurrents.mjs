@@ -69,6 +69,6 @@ export async function lashingCurrents() {
         )
     );
     await existingLC.update({ "system.rules": oldRules });
-    localizedBanner(`${PREFIX}.Info.Removing`, { data: { name: existingLC.name }, console: false });
+    localizedBanner(`${PREFIX}.Info.Removing`, { context: { name: existingLC.name }, console: false });
   }
 }

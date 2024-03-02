@@ -31,7 +31,7 @@ export class MHLDialog extends Dialog {
       const disallowedKeys = ["buttons", "content"];
       if (!Object.keys(contentData).every((k) => !disallowedKeys.includes(k))) {
         throw MHLError(`${PREFIX}.Error.ReservedKeys`, {
-          data: { keys: disallowedKeys.join(", ") },
+          context: { keys: disallowedKeys.join(", ") },
           func: "MHLDialog: ",
           log: { contentData },
         });
@@ -42,7 +42,7 @@ export class MHLDialog extends Dialog {
       const cancelButtons = this.data.cancelButtons;
       if (!Array.isArray(cancelButtons) || !cancelButtons.every((b) => typeof b === "string")) {
         throw MHLError(`MHL.Error.Type.Array`, {
-          data: { var: "cancelButtons", of: localize(`MHL.Error.Type.Of.ButtonLabelStrings`) },
+          context: { var: "cancelButtons", of: localize(`MHL.Error.Type.Of.ButtonLabelStrings`) },
           func,
           log: { cancelButtons },
         });
@@ -73,7 +73,7 @@ export class MHLDialog extends Dialog {
                 .join(", ");
               // don't use MHLBanner for genericity, use data.prefix for specificity
               localizedBanner(`${PREFIX}.Warning.RequiredFields`, {
-                data: { fields: fieldsError },
+                context: { fields: fieldsError },
                 type: "warn",
                 console: false,
                 prefix: this.data.prefix,
