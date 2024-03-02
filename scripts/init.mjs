@@ -30,6 +30,7 @@ Hooks.on("init", () => {
     prefix: "MHL.Setting",
     disabledResetClass: "disabled-transparent",
     // resetButtons: false,
+    groups: false,
   };
   mod.settingsManager = new classes.MHLSettingsManager(MODULE_ID, settingManagerOptions);
   //special exposure
@@ -39,7 +40,6 @@ Hooks.on("init", () => {
 Hooks.once("i18nInit", () => {
   const mod = MODULE();
   mod.settingsManager.registerSettings(SETTINGS);
-
 });
 Hooks.once("setup", () => {
   const mod = MODULE();
@@ -50,9 +50,9 @@ Hooks.once("setup", () => {
 Hooks.once("ready", () => {
   const verifiedFor = VERIFIED_SYSTEM_VERSIONS[game.system.id] ?? false;
   if (verifiedFor && !fu.isNewerVersion(game.system.version, verifiedFor))
-    helpers.MHLBanner(
-      `MHL.Warning.SystemBelowVerified`,
-      { version: game.system.version, verified: verifiedFor },
-      { type: "warn", permanent: true }
-    );
+    helpers.MHLBanner(`MHL.Warning.SystemBelowVerified`, {
+      data: { version: game.system.version, verified: verifiedFor },
+      type: "warn",
+      permanent: true,
+    });
 });

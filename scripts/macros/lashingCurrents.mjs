@@ -37,7 +37,7 @@ export async function lashingCurrents() {
       held: true,
       itemType: "weapon",
     });
-    if (!relicWeapon) throw MHLError(`${PREFIX}.Error.NoneSelected`, null, { func });
+    if (!relicWeapon) throw MHLError(`${PREFIX}.Error.NoneSelected`, { func });
     rules.push({
       key: "Striking",
       selector: "lashing-currents-damage",
@@ -69,6 +69,6 @@ export async function lashingCurrents() {
         )
     );
     await existingLC.update({ "system.rules": oldRules });
-    localizedBanner(`${PREFIX}.Info.Removing`, { name: existingLC.name }, { console: false });
+    localizedBanner(`${PREFIX}.Info.Removing`, { data: { name: existingLC.name }, console: false });
   }
 }

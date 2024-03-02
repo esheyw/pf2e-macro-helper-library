@@ -124,7 +124,7 @@ export async function fascinatingPerformance() {
         (i) => i.name.toLowerCase().includes("immun") && i.name.toLowerCase().includes("fascinating performance")
       );
       if (immunityEffect) {
-        MHLBanner(`${PREFIX}.Warning.TargetImmune`, { name: targetToken.name }, { func });
+        MHLBanner(`${PREFIX}.Warning.TargetImmune`, { data: { name: targetToken.name }, func });
         continue;
       }
       const extraRollOptions = [];

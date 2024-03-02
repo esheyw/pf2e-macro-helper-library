@@ -30,22 +30,22 @@ export class MHLDialog extends Dialog {
       const contentData = this.data.contentData;
       const disallowedKeys = ["buttons", "content"];
       if (!Object.keys(contentData).every((k) => !disallowedKeys.includes(k))) {
-        throw MHLError(
-          `${PREFIX}.Error.ReservedKeys`,
-          { keys: disallowedKeys.join(", ") },
-          { func: "MHLDialog: ", log: { contentData } }
-        );
+        throw MHLError(`${PREFIX}.Error.ReservedKeys`, {
+          data: { keys: disallowedKeys.join(", ") },
+          func: "MHLDialog: ",
+          log: { contentData },
+        });
       }
     }
 
     if ("cancelButtons" in this.data) {
       const cancelButtons = this.data.cancelButtons;
       if (!Array.isArray(cancelButtons) || !cancelButtons.every((b) => typeof b === "string")) {
-        throw MHLError(
-          `MHL.Error.Type.Array`,
-          { var: "cancelButtons", of: localize(`MHL.Error.Type.Of.ButtonLabelStrings`) },
-          { func, log: { cancelButtons } }
-        );
+        throw MHLError(`MHL.Error.Type.Array`, {
+          data: { var: "cancelButtons", of: localize(`MHL.Error.Type.Of.ButtonLabelStrings`) },
+          func,
+          log: { cancelButtons },
+        });
       }
     }
     this.data.cancelButtons ??= ["no", "cancel"];
@@ -71,12 +71,13 @@ export class MHLDialog extends Dialog {
                     : f
                 )
                 .join(", ");
-              localizedBanner(
-                // don't use MHLBanner for genericity
-                `${PREFIX}.Warning.RequiredFields`,
-                { fields: fieldsError },
-                { type: "warn", console: false, prefix: this.data.prefix }
-              );
+              // don't use MHLBanner for genericity, use data.prefix for specificity
+              localizedBanner(`${PREFIX}.Warning.RequiredFields`, {
+                data: { fields: fieldsError },
+                type: "warn",
+                console: false,
+                prefix: this.data.prefix,
+              });
               log({ formValues }, { type: "warn", prefix: this.data.prefix });
               return false;
             }
@@ -85,7 +86,7 @@ export class MHLDialog extends Dialog {
           break;
         }
       default:
-        throw MHLError(`${PREFIX}.Error.BadValidator`, null, { func: "MHLDialog: ", log: { validator } });
+        throw MHLError(`${PREFIX}.Error.BadValidator`, { func: "MHLDialog: ", log: { validator } });
     }
     return validator;
   }

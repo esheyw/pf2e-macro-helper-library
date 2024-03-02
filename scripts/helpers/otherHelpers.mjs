@@ -17,7 +17,7 @@ export async function applyOwnshipToFolderStructure(root, exemplar) {
 export function getIDsFromFolder(root) {
   if (!(root instanceof Folder)) {
     if (typeof root === "string") root = game.folders.get(root);
-    if (!root) throw MHLError("MHL.Error.Type.Folder", { var: "root" }, { func: "getIDsFromFolder" });
+    if (!root) throw MHLError("MHL.Error.Type.Folder", { data: { var: "root" }, func: "getIDsFromFolder" });
   }
   return root.contents.concat(root.getSubfolders(true).flatMap((f) => f.contents)).map((c) => c.id);
 }
@@ -92,7 +92,7 @@ export function doc(input, type = null, { parent = null, returnIndex = false, as
     } else {
       if (!requireType(type)) return undefined;
       const collection = (parent ?? game)[type.collectionName];
-      document = collection.get(input) ?? document.getName(input);
+      document = collection.get(input) ?? collection.getName(input);
     }
   }
   if (!requireType(type)) return undefined;
@@ -119,7 +119,7 @@ export async function pickAThingDialog({ things = null, title = null, thingType 
   const buttons = things.reduce((acc, curr) => {
     let buttonLabel = ``;
     if (!("label" in curr && "value" in curr)) {
-      throw MHLError(`${PREFIX}.Error.MalformedThing`, null, { log: { badthing: curr } });
+      throw MHLError(`${PREFIX}.Error.MalformedThing`, { log: { badthing: curr } });
     }
     if (curr?.img) {
       buttonLabel += `<img src="${curr.img}" alt="${curr.label}" data-tooltip="${curr?.indentifier ?? curr.label}" />`;

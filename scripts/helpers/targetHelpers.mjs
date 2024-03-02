@@ -8,7 +8,7 @@ export function oneTargetOnly(options = {}) {
     if (useFirst) {
       mhlog(`MHL.Warning.Fallback.FirstTarget`, { localize: true, data: { name: firstTarget.name }, func });
     } else {
-      throw MHLError(`MHL.Error.Target.NotOneTargetted`, null, { func });
+      throw MHLError(`MHL.Error.Target.NotOneTargetted`, { func });
     }
   }
   return firstTarget;
@@ -18,7 +18,7 @@ export function anyTargets(options = {}) {
   user ??= game.user;
   if (typeof user === "string") user = game.users.get(user) ?? game.users.getName(user);
   if (!(user instanceof User)) {
-    throw MHLError(`MHL.Error.Type.User`, { var: "user" }, { log: { user }, func });
+    throw MHLError(`MHL.Error.Type.User`, { data: { var: "user" }, log: { user }, func });
   }
   if (user.targets.size === 0) {
     throw MHLError(`MHL.Error.Target.NotAnyTargetted`, { func });

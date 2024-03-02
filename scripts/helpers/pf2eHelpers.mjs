@@ -6,14 +6,14 @@ import { prependIndefiniteArticle } from "./stringHelpers.mjs";
 export function levelBasedDC(level) {
   const func = "levelBasedDC";
   if (typeof level !== "number") {
-    throw MHLError(`MHL.Error.Type.Number`, { var: "level" }, { func, log: { level } });
+    throw MHLError(`MHL.Error.Type.Number`, { data: { var: "level" }, func, log: { level } });
   }
   const DCByLevel = [
     14, 15, 16, 18, 19, 20, 22, 23, 24, 26, 27, 28, 30, 31, 32, 34, 35, 36, 38, 39, 40, 42, 44, 46, 48, 50,
   ];
   let DC = 0;
   if (level >= DCByLevel.length || level < -1) {
-    mhlog({level},{localize: true, prefix:`MHL.Warning.Fallback.LevelOutOfBounds`, func });
+    mhlog({ level }, { localize: true, prefix: `MHL.Warning.Fallback.LevelOutOfBounds`, func });
     level = 26;
   }
   if (level === -1) {
@@ -44,14 +44,14 @@ export async function pickItemFromActor(
     filteredItems = actor.items.filter((i) => i.type === itemType) ?? [];
   }
   if (!filteredItems.length) {
-    if (errorIfEmpty) throw MHLError(`MHL.Error.NoItemsOfType`, { itemType });
+    if (errorIfEmpty) throw MHLError(`MHL.Error.NoItemsOfType`, { data: { itemType } });
     return null;
   }
 
   if (otherFilter && typeof otherFilter === "function") {
     filteredItems = filteredItems.filter(otherFilter);
     if (!filteredItems.length) {
-      if (errorIfEmpty) throw MHLError(`MHL.Error.FilterUnmatched`, null, { log: { filter: otherFilter } });
+      if (errorIfEmpty) throw MHLError(`MHL.Error.FilterUnmatched`, { log: { filter: otherFilter } });
       return null;
     }
   }
@@ -113,13 +113,13 @@ export async function getAllFromAllowedPacks({
 
   const originalType = type;
   if (!validTypes.includes(type) && !validTypes.includes((type = aliases[type] ?? ""))) {
-    throw MHLError(`MHL.Error.InvalidType`, { type: originalType }, { func });
+    throw MHLError(`MHL.Error.InvalidType`, { data: { type: originalType }, func });
   }
   if (!Array.isArray(fields) || (fields.length && fields.some((f) => typeof f !== "string"))) {
-    throw MHLError(`MHL.Error.FieldsFormat`, null, { func, log: { fields } });
+    throw MHLError(`MHL.Error.FieldsFormat`, { func, log: { fields } });
   }
   if (filter && typeof filter !== "function") {
-    throw MHLError(`MHL.Error.Type.Function`, { var: "filter" }, { func, log: { filter } });
+    throw MHLError(`MHL.Error.Type.Function`, { data: { var: "filter" }, func, log: { filter } });
   }
 
   //initialize the sources list if it hasn't been set
@@ -188,11 +188,11 @@ export async function getAllFromAllowedPacks({
 //TODO: Generalize before marking for export
 function generateTraitsFlavour(traits = []) {
   if (!Array.isArray(traits)) {
-    throw MHLError(
-      `MHL.Error.Type.Array`,
-      { var: "traits", of: localize(`MHL.Error.Type.Of.TraitSlugs`) },
-      { func: "generateTraitsFlavour: ", log: { traits } }
-    );
+    throw MHLError(`MHL.Error.Type.Array`, {
+      data: { var: "traits", of: localize(`MHL.Error.Type.Of.TraitSlugs`) },
+      func: "generateTraitsFlavour: ",
+      log: { traits },
+    });
   }
   return traits
     .map((tag) => {

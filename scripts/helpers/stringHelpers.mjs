@@ -1,22 +1,58 @@
 import { MODULE_ID, fu } from "../constants.mjs";
-import { setting } from "../settings.mjs";
 import { MHLError, mhlog } from "./index.mjs";
-export function prependIndefiniteArticle(string) {
-  const vowels = "aeiou";
-  const article =
-    vowels.indexOf(string[0].toLowerCase()) > -1
-      ? localize(`MHL.Grammar.Articles.An`)
-      : localize(`MHL.Grammar.Articles.A`);
-  return `${article} ${string}`;
+
+export function getLogPrefix(text, options = {}) {
+  let out = "";
+  let { prefix, mod, func } = options;
+  if (typeof text !== "string") {
+    mhlog(`MHL.Warning.Fallback.Type`, {
+      func: `getLogPrefix`,
+      localize: true,
+      data: { var: "text", type: typeof text, expected: "string" },
+    });
+    text = String(text);
+  }
+  mod = String(mod ?? "");
+  func = String(func ?? "");
+  prefix = String(prefix ?? "");
+  if (mod && !text.startsWith(`${mod} |`)) out += `${mod} | `;
+  if (func && !text.includes(`${func} |`)) out += `${func} | `;
+  if (prefix) out += prefix;
+  return out;
 }
 
-export function localize(str, data = {}, { defaultEmpty = true } = {}) {
+export function prependIndefiniteArticle(text) {
+  const vowels = "aeiou";
+  if (typeof text !== "string") {
+    mhlog(`MHL.Warning.Fallback.Type`, {
+      func: "prependIndefiniteArticle",
+      localize: true,
+      data: { var: "text", type: typeof text, expected: "string" },
+    });
+    text = String(text);
+  }
+  const article =
+    vowels.indexOf(text[0].toLowerCase()) > -1
+      ? localize(`MHL.Grammar.Articles.An`)
+      : localize(`MHL.Grammar.Articles.A`);
+  return `${article} ${text}`;
+}
+
+export function localize(text, data = {}, { defaultEmpty = true } = {}) {
+  if (typeof text !== "string") {
+    mhlog(`MHL.Warning.Fallback.Type`, {
+      func: "localize",
+      localize: true,
+      data: { var: "text", type: typeof text, expected: "string" },
+    });
+    text = String(text);
+  }
   if (fu.isEmpty(game.i18n?.translations)) {
     return `Localization attempted before i18n initialization, pasteable command: 
-    game.modules.get('${MODULE_ID}').api.localize('${str}', ${JSON.stringify(data)})`;
+    game.modules.get('${MODULE_ID}').api.localize('${text}', ${JSON.stringify(data)})`;
   }
   return game.i18n
-    .localize(str)
+    .localize(text)
     .replace(/(?<!\\)({[^}]+})/g, (match) => {
       // match all {} not preceded by \
       return data[match.slice(1, -1)] ?? (defaultEmpty ? "" : undefined);
@@ -38,7 +74,14 @@ export function sluggify(text, { camel = null } = {}) {
   const nonWordCharacterHyphenOrSpaceRE =
     /[^-\p{White_Space}\p{Alphabetic}\p{Mark}\p{Decimal_Number}\p{Join_Control}]/gu;
   const upperOrWordBoundariedLowerRE = new RegExp(`${upperCaseLetter}|(?:${wordBoundary})${lowerCaseLetter}`, "gu");
-  if (typeof text !== "string") return null; //i'm okay being a bit more agressive than the system here, it should break something
+  if (typeof text !== "string") {
+    mhlog(`MHL.Warning.Fallback.Type`, {
+      func: "sluggify",
+      localize: true,
+      data: { var: "text", type: typeof text, expected: "string" },
+    });
+    text = String(text);
+  }
   if (text === "-") return text; //would otherwise be reduced to ""
   switch (camel) {
     case null:
@@ -60,49 +103,49 @@ export function sluggify(text, { camel = null } = {}) {
         .replace(upperOrWordBoundariedLowerRE, (part, index) => (index === 0 ? part.toLowerCase() : part.toUpperCase()))
         .replace(/\s+/g, "");
     default:
-      throw MHLError(`MHL.Error.InvalidCamel`, { camel }, { log: { camel }, func: "sluggify" });
+      throw MHLError(`MHL.Error.InvalidCamel`, { data: { camel }, log: { camel }, func: "sluggify" });
   }
 }
 
-export function getIconString(string, { classesOnly = false } = {}) {
+export function getIconString(input, { classesOnly = false } = {}) {
   const func = "getIconString";
-  if (typeof string !== "string") {
+  if (typeof input !== "string") {
     mhlog(`MHL.Warning.Fallback.Type`, {
       localize: true,
-      data: { var: "string", expected: "string", type: typeof string },
+      data: { var: "string", expected: "string", type: typeof input },
       func,
     });
-    string = String(string);
+    input = String(input);
   }
   const pre = `<i class="`;
   const post = `"></i>`;
-  const containsHTML = /<[^>]+>/.test(string);
-  const matches = new RegExp(`(${pre})([-a-z0-9\s]+)(${post})`).exec(string);
+  const containsHTML = /<[^>]+>/.test(input);
+  const matches = new RegExp(`(${pre})([-a-z0-9\s]+)(${post})`).exec(input);
   if (containsHTML && !matches) {
-    mhlog(`MHL.Error.Validation.FontAwesomeIcon`, { localize: true, data: { string }, func });
+    mhlog(`MHL.Error.Validation.FontAwesomeIcon`, { localize: true, data: { string: input }, func });
     return "";
   }
-  const classes = matches ? getIconClasses(matches[2]) : getIconClasses(string);
+  const classes = matches ? getIconClasses(matches[2]) : getIconClasses(input);
   if (!classes) return "";
   return classesOnly ? classes : pre + classes + post;
 }
 
-export function getIconClasses(string) {
+export function getIconClasses(input) {
   const func = "getIconClasses";
-  if (typeof string !== "string") {
+  if (typeof input !== "string") {
     mhlog(`MHL.Warning.Fallback.Type`, {
       localize: true,
-      data: { var: "string", expected: "string", type: typeof string },
+      data: { var: "string", expected: "string", type: typeof input },
       func,
     });
-    string = String(string);
+    input = String(input);
   }
   const partsSeen = {
     sharp: null,
     type: null,
     slug: null,
   };
-  const parts = string.split(/\s+/).map((p) => p.toLowerCase());
+  const parts = input.split(/\s+/).map((p) => p.toLowerCase());
   if (parts.length > 3) {
     return false;
   }
@@ -121,7 +164,7 @@ export function getIconClasses(string) {
     }
   }
   if (!partsSeen.slug) {
-    mhlog(`MHL.Error.Validation.FontAwesomeClasses`, { localize: true, data: { string }, func });
+    mhlog(`MHL.Error.Validation.FontAwesomeClasses`, { localize: true, data: { string: input }, func });
     return false;
   }
   return [partsSeen.sharp ?? "", partsSeen.type ?? "fa-regular", partsSeen.slug].join(" ").trim();

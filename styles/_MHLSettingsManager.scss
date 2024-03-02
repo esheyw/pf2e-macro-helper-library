@@ -30,6 +30,9 @@ section.mhl-settings-manager {
     // padding-top: 0.2em;
     // padding-bottom: 0.2em;
     // }
+    // .form-fields {      
+    //   max-width: 45%;
+    // }
     input[type="color"] {
       max-width: 20%;
     }
@@ -45,15 +48,23 @@ section.mhl-settings-manager {
     font-weight: bold;
     text-decoration: underline;
   }
+  table {
+    width: 100%;
+  }
   td {
-    font-weight: bold;
-    text-align: center;
+    font-weight: bolder;
+    // text-align: center;
+    min-width: 15%;
 
-  }
-  td:is(.config-true, .has-default-true, .is-default-true) {
-    color: var(--mhl-color-success);
-  }
-  td:is(.config-false, .has-default-false, .is-default-false) {
-    color: var(--mhl-color-failure);
+    &.value-display {
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+    &.bool-true {
+      color: var(--mhl-color-success);
+    }
+    &.bool-false {
+      color: var(--mhl-color-failure);
+    }
   }
 }

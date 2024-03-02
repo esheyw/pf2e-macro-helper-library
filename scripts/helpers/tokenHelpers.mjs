@@ -11,7 +11,7 @@ export function oneTokenOnly(options = {}) {
     if (useFirst) {
       mhlog(`MHL.Warning.Fallback.FirstToken`, { localize: true, data: { name: tokens[0].name }, func });
     } else {
-      throw MHLError(`MHL.Error.Token.NotOneSelected`, null, { func });
+      throw MHLError(`MHL.Error.Token.NotOneSelected`, { func });
     }
   }
   return tokens[0];
@@ -24,11 +24,10 @@ export function anyTokens(options = {}) {
       const activeTokens = game.user.character.getActiveTokens();
       if (activeTokens.length) return activeTokens[0];
     }
-    throw MHLError(
-      `MHL.Error.Token.NotAnySelected`,
-      { fallback: fallback ? localize(`MHL.Error.Token.Fallback`) : "" },
-      { func }
-    );
+    throw MHLError(`MHL.Error.Token.NotAnySelected`, {
+      data: { fallback: fallback ? localize(`MHL.Error.Token.Fallback`) : "" },
+      func,
+    });
   }
   return canvas.tokens.controlled;
 }

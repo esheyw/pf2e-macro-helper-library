@@ -10,7 +10,9 @@ export async function recoverOldLashingCurrents() {
     otherFilter: (i) => i.flags.pf2e.isLashingCurrents,
     errorIfEmpty: false,
   });
-  if (!existingLC) throw MHLError("MHL.Macros.LashingCurrents.Error.NoExistingFound", { name: token.name }, { func });
+  if (!existingLC) {
+    throw MHLError("MHL.Macros.LashingCurrents.Error.NoExistingFound", { data: { name: token.name }, func });
+  }
   let originalRelicWeaponData = JSON.parse(existingLC.flags.pf2e.originalRelicWeapon);
 
   originalRelicWeaponData.system.runes.potency = originalRelicWeaponData.system.potencyRune;

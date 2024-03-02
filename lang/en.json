@@ -32,11 +32,12 @@
         "IsDefault": "Setting is currently equal to its default value"
       },
       "ResetAll": {
-        "Title": "Reset All to Default",
+        "AllDefault": "All settings are currently equal to their default value",
+        "Body": "This module has <span class=\"count-tooltip\" data-tooltip-direction=\"UP\" data-tooltip=\"{defaultlessTooltip}\">{defaultlessCount}</span> setting(s) without defaults, and <span class=\"count-tooltip\" data-tooltip-direction=\"UP\" data-tooltip=\"{areDefaultTooltip}\">{areDefault}</span> setting(s) that are unchanged from their default. This action will reset:",
+        "Footer": "Note: This will apply immediately to the actual settings, not just the inputs in the settings window.",
         "Header": "Reset All {module} Settings?",
-        "Body": "Reset all <strong>{module}</strong> settings to their default values ({count} settings currently not default)? <br><em>Note: This will apply immediately to the actual settings, not just the inputs in the settings window.</em>",
-        "Tooltip": "Reset all of this module's settings to default values",
-        "AllDefault": "All settings are currently equal to their default value"
+        "Title": "Reset All to Default",
+        "Tooltip": "Reset all of this module's settings to default values"
       },
       "ColorPicker": {
         "ValidHexCode": "Must be a # followed by a valid 6-character hex color code"
@@ -208,10 +209,15 @@
         "Name": "Enable legacy access to MHL API",
         "Hint": "Populates `game.pf2emhl`, as is tradition. Available only after the Setup hook."
       },
-      "PolluteGlobal": {
+      "GlobalAccess": {
         "Name": "Global API access",
         "Hint": "Makes the MHL API accessible via just `mhl` in the global scope. Available only after the Setup hook."
       }
+    },
+    "SettingGroup": {
+      "Testing": "Testing",
+      "Access": "API Access",
+      "ErrorHandling": "Error Handling"
     }
   }
 }

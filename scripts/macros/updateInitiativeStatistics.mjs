@@ -11,7 +11,7 @@ export async function updateInitiativeStatistics() {
   const tokens = anyTokens().filter(
     (t) => ["character", "npc"].includes(t.actor.type) && !t.actor.traits.intersects(new Set(["minion", "eidolon"]))
   );
-  if (!tokens.length) throw MHLError(`${PREFIX}.Error.NoValidTokens`, null, { func });
+  if (!tokens.length) throw MHLError(`${PREFIX}.Error.NoValidTokens`, { func });
 
   const renderCallback = (html) => {
     const allSelect = html.querySelector("select[name=all]");

@@ -15,6 +15,7 @@ export const SETTINGS = {
     },
     default: "warn",
     scope: "world",
+    group: "MHL.SettingGroup.ErrorHandling",
   },
   "test-setting": {
     config: true,
@@ -27,6 +28,7 @@ export const SETTINGS = {
       hook: "preCreateMacro",
       action: () => console.warn("PRECREATE!"),
     },
+    group: "MHL.SettingGroup.Testing",
   },
   "test-replacer": {
     config: true,
@@ -38,6 +40,7 @@ export const SETTINGS = {
       icon: "fa-house",
       action: () => ui.notifications.info(`You're Home!`),
     },
+    group: "MHL.SettingGroup.Testing",
   },
   "test-range": {
     config: true,
@@ -51,6 +54,7 @@ export const SETTINGS = {
       max: 10,
       step: 0.5,
     },
+    group: "MHL.SettingGroup.Testing",
   },
   "test-choices": {
     config: true,
@@ -75,6 +79,7 @@ export const SETTINGS = {
       dependsOn: "test-range",
       test: (n) => n > 5,
     },
+    group: "MHL.SettingGroup.Testing",
   },
   "test-color": {
     config: true,
@@ -83,6 +88,7 @@ export const SETTINGS = {
     name: null,
     hint: null,
     scope: "world",
+    group: "MHL.SettingGroup.Testing",
   },
   "global-access": {
     config: true,
@@ -95,6 +101,7 @@ export const SETTINGS = {
       if (value) globalThis.mhl = MODULE().api;
       else delete globalThis.mhl;
     },
+    group: "MHL.SettingGroup.Access",
   },
   "legacy-access": {
     config: true,
@@ -107,17 +114,28 @@ export const SETTINGS = {
       if (value) game.pf2emhl = MODULE().api;
       else delete game.pf2emhl;
     },
+    group: "MHL.SettingGroup.Access",
   },
   "no-default": {
     config: true,
     type: String,
     name: null,
+    group: "MHL.SettingGroup.Testing",
   },
   "test-client": {
     config: true,
     type: Boolean,
     name: null,
     default: true,
+  },
+  "test-object": {
+    type: Object,
+    config: false,
+    scope: "world",
+    default: {
+      a: 6,
+      b: "hi",
+    },
   },
 };
 

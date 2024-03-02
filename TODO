@@ -10,3 +10,4 @@
 - add settings groups, reset per group
 - set up physical types per system
 - replace MHL setting defaults to non-testing values before release
+- known bug: Reset All button doesn't go dormant if an object setting was reset
