@@ -53,8 +53,8 @@
         "BadModuleID": "moduleID must be a string module ID or a Module object reference.",
         "Visibility": {
           "UnknownDependency": "Setting {dependsOn} not found, so it cannot be predicated on for visibility for setting {setting} of {module}.",
-          "BadObject": "Visibility data for setting {setting} of {module} is malformed; requires a string `dependsOn` key referencing a valid setting.",
-          "TestFunction": "Visibility data for setting {setting} of {module} is malformed; `test`, if provided, must be a function.",
+          "RequireDependsOn": "Visibility data for setting {setting} of {module} is malformed: If provided as an object, must contain a `dependsOn` key containing a string setting ID or an array of such.",
+          "RequireTest": "Visibility data for setting {setting} of {module} is malformed: If provided as an object, must contain a function under the `test` key.",
           "BadFormat": "Visibility data for setting {setting} must be either a string setting ID (with optional ! prefix) or an object containing such under the `dependsOn` key, with an optional `test` function key."
         },
         "DuplicateSetting": "Setting ID \"{setting}\" already exists for {module}.",

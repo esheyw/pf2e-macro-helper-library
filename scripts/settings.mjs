@@ -1,5 +1,4 @@
-import { MODULE_ID } from "./constants.mjs";
-import { mhlog } from "./helpers/index.mjs";
+import { mhlog } from "./helpers/errorHelpers.mjs";
 import { MODULE } from "./init.mjs";
 export const SETTINGS = {
   "log-level": {
@@ -29,6 +28,12 @@ export const SETTINGS = {
       action: () => console.warn("PRECREATE!"),
     },
     group: "MHL.SettingGroup.Testing",
+    visibility: {
+      dependsOn: ["!test-client", "test-range"],
+      test: (formValues, savedValues, visibile) => {
+        return formValues['test-range'] > 5 && !formValues['test-client'];
+      },
+    },
   },
   "test-replacer": {
     config: true,
@@ -75,10 +80,10 @@ export const SETTINGS = {
         test: (value) => value === "costello",
       },
     ],
-    visibility: {
-      dependsOn: "test-range",
-      test: (n) => n > 5,
-    },
+    // visibility: {
+    //   dependsOn: "test-range",
+    //   test: (n) => n > 5,
+    // },
     group: "MHL.SettingGroup.Testing",
   },
   "test-color": {
@@ -135,7 +140,15 @@ export const SETTINGS = {
     default: {
       a: 6,
       b: "hi",
+      f: (v) => console.warn(v),
     },
+  },
+  "test-picker": {
+    config: true,
+    scope: "world",
+    filePicker: "folder",
+    name: null,
+    hint: null,
   },
 };
 

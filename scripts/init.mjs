@@ -27,7 +27,7 @@ Hooks.on("init", () => {
   registerHandlebarsHelpers();
 
   const settingManagerOptions = {
-    prefix: "MHL.Setting",
+    settingPrefix: "MHL.Setting",
     disabledResetClass: "disabled-transparent",
     // resetButtons: false,
     groups: false,
