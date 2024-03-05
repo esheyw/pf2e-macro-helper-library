@@ -30,7 +30,8 @@ Hooks.on("init", () => {
     settingPrefix: "MHL.Setting",
     disabledResetClass: "disabled-transparent",
     // resetButtons: false,
-    groups: false,
+    groups: true,
+    // sort: "a"
   };
   mod.settingsManager = new classes.MHLSettingsManager(MODULE_ID, settingManagerOptions);
   //special exposure

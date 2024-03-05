@@ -7,20 +7,43 @@ import { MHLDialog } from "./MHLDialog.mjs";
 const PREFIX = `MHL.SettingsManager`;
 const funcPrefix = `MHLSettingsManager`;
 export class MHLSettingsManager {
-  #groups = { ungrouped: [] };
+  #groups = new Collection([["ungrouped", []]]);
+  #groupOrder = new Set(["ungrouped"]);
   #initialized = false;
   #module;
   #potentialSettings = new Set();
   #resetAllListener = { listener: null, active: false };
+  #resetGroupListeners = new Collection();
   #resetListeners = new Collection();
   #settings = new Collection();
   #visibilityControlElements = new Set();
   #visibilityListeners = new Map();
 
   constructor(mod, options = {}) {
+    const func = `${funcPrefix}#constructor`;
     this.#module = mod instanceof Module ? mod : game.modules.get(mod);
     if (!this.#module) throw MHLError(`${PREFIX}.Error.BadModuleID`, { log: { mod }, func: funcPrefix });
     this.options = fu.mergeObject(this.defaultOptions, options);
+    if (this.options.groups && Array.isArray(this.options.groups)) {
+      for (const group of this.options.groups) {
+        if (typeof group !== "string") {
+          modLog(
+            { group },
+            { mod: this.options.modPrefix, type: "error", func, localize: true, prefix: `${PREFIX}.Error.InvalidGroup` }
+          );
+          continue;
+        }
+        this.#groupOrder.add(group);
+      }
+    }
+
+    if (this.options.sort && !(this.options.sort === "a" || typeof this.options.sort === "function")) {
+      modLog(
+        { sort: options.sort },
+        { mod: this.options.modPrefix, type: "error", func, localize: true, prefix: `${PREFIX}.Error.InvalidSort` }
+      );
+      this.options.sort = null;
+    }
     if (options?.settings) this.registerSettings(settings);
     Hooks.on("renderSettingsConfig", this.#onRenderSettings.bind(this));
     this.#initialized = true;
@@ -47,6 +70,7 @@ export class MHLSettingsManager {
   }
 
   #onRenderSettings(app, html, data) {
+    const func = `${funcPrefix}#onRenderSettings`;
     html = html instanceof jQuery ? html[0] : html;
     const clientSettings = this.#settings.filter((setting) => setting?.scope !== "world");
     //if there's nothign to display anyway, bail
@@ -56,22 +80,10 @@ export class MHLSettingsManager {
     if (this.options.resetButtons) {
       this.#addResetAllButton(section);
     }
-    let currentGroup = "ungrouped";
-    const seenGroups = [];
     const settingDivs = htmlQueryAll(section, `[data-setting-id]`);
     for (const div of settingDivs) {
       const settingData = game.settings.settings.get(div.dataset.settingId);
-      if (this.options.groups && "group" in settingData && settingData.group !== currentGroup) {
-        if (seenGroups.includes(settingData.group)) {
-          mhlog("group error, seen this group already", { type: "error" });
-        } else {
-          seenGroups.push(currentGroup);
-          currentGroup = settingData.group;
-          const groupHeader = document.createElement("h3");
-          groupHeader.innerText = localize(currentGroup);
-          section.insertBefore(groupHeader, div);
-        }
-      }
+
       if (this.options.buttons && "button" in settingData) {
         this.#replaceWithButton(div, settingData.button);
       }
@@ -89,6 +101,12 @@ export class MHLSettingsManager {
       if (this.options.visibility && "visibility" in settingData) {
         this.#addVisibilityListeners(div, settingData.visibility);
       }
+    }
+    // handle groups, sorting, and sorting of groups
+    this.#sortHTML(section);
+
+    if (this.options.groups && this.options.resetButtons) {
+      this.#addResetGroupButtons(section);
     }
     //initial visibility checks
     for (const el of this.#visibilityControlElements) {
@@ -115,9 +133,6 @@ export class MHLSettingsManager {
     return undefined;
   }
 
-  dump() {
-    mhlog(this);
-  }
   async set(setting, value) {
     const func = `${funcPrefix}#set`;
     if (!this.#requireSetting(setting, func)) return undefined;
@@ -160,55 +175,52 @@ export class MHLSettingsManager {
     }
     //have all potential keys available to predicate visibility upon
     this.#potentialSettings = new Set([...settings.map(([key, _]) => key)]);
-    if (this.options.groups) {
-      const tempSettings = new Collection();
-      for (const [setting, data] of settings) {
-        const processed = this.#processSettingData(setting, data);
-        if (!processed) {
-          mhlog(
-            { setting, data, module: this.#module.id },
-            {
-              localize: true,
-              prefix: `${PREFIX}.Error.InvalidSettingData`,
-              func,
-              context: { setting, module: this.#module.id },
-            }
-          );
-          continue;
-        }
-        tempSettings.set(setting, processed);
-      }
-      for (const setting of this.#groups.ungrouped) {
-        this.#register(setting, tempSettings.get(setting));
-      }
-      const groups = Object.entries(this.#groups).filter(([group, list]) => group !== "ungrouped");
-      for (const [group, settings] of groups) {
-        for (const setting of settings) {
-          this.#register(setting, tempSettings.get(setting));
-        }
-      }
-    } else {
-      for (const [setting, data] of settings) {
-        const success = this.registerSetting(setting, data, { initial: true });
-        if (!success) {
-          mhlog(
-            { setting, data, module: this.#module.id },
-            {
-              localize: true,
-              prefix: `${PREFIX}.Error.InvalidSettingData`,
-              func,
-              context: { setting, module: this.#module.id },
-            }
-          );
-        }
+
+    for (const [setting, data] of settings) {
+      const success = this.registerSetting(setting, data, { initial: true });
+      if (!success) {
+        mhlog(
+          { setting, data, module: this.#module.id },
+          {
+            localize: true,
+            prefix: `${PREFIX}.Error.InvalidSettingData`,
+            func,
+            context: { setting, module: this.#module.id },
+          }
+        );
       }
     }
+
     if (game?.user) {
       // 'are settings available' hack
       this.#updateHooks();
     } else {
       Hooks.once("setup", this.#updateHooks.bind(this));
     }
+  }
+
+  registerSetting(setting, data, { initial = false } = {}) {
+    const func = `${funcPrefix}#registerSetting`;
+    if (!this.#potentialSettings.has(setting)) this.#potentialSettings.add(setting);
+    if (game.settings.settings.get(`${this.#module.id}.${setting}`)) {
+      mhlog(`${PREFIX}.Error.DuplicateSetting`, {
+        type: "error",
+        localize: true,
+        context: { setting, module: this.#module.id },
+        func,
+      });
+      return false;
+    }
+
+    data = this.#processSettingData(setting, data);
+    if (!data) return false;
+
+    //actually register the setting finally
+    this.#register(setting, data);
+    // only update hooks if we're not inside a registerSettings call
+    if (!initial) this.#updateHooks(setting);
+    this.#potentialSettings.delete(setting);
+    return true;
   }
 
   #processSettingData(setting, data) {
@@ -252,36 +264,13 @@ export class MHLSettingsManager {
       if (!data.hooks) delete data.hooks;
     }
     if ("group" in data && typeof data.group === "string" && data?.config) {
-      this.#groups[data.group] ??= [];
-      this.#groups[data.group].push(setting);
+      if (!this.#groups.has(data.group)) this.#groups.set(data.group, []);
+      this.#groups.get(data.group).push(setting);
+      if (!this.#groupOrder.has(data.group)) this.#groupOrder.add(data.group);
     } else {
-      this.#groups.ungrouped.push(setting);
+      this.#groups.get("ungrouped").push(setting);
     }
     return data;
-  }
-
-  registerSetting(setting, data, { initial = false } = {}) {
-    const func = `${funcPrefix}#registerSetting`;
-    if (!this.#potentialSettings.has(setting)) this.#potentialSettings.add(setting);
-    if (game.settings.settings.get(`${this.#module.id}.${setting}`)) {
-      mhlog(`${PREFIX}.Error.DuplicateSetting`, {
-        type: "error",
-        localize: true,
-        context: { setting, module: this.#module.id },
-        func,
-      });
-      return false;
-    }
-
-    data = this.#processSettingData(setting, data);
-    if (!data) return false;
-
-    //actually register the setting finally
-    this.#register(setting, data);
-    // only update hooks if we're not inside a registerSettings call
-    if (!initial) this.#updateHooks(setting);
-    this.#potentialSettings.delete(setting);
-    return true;
   }
 
   #register(setting, data) {
@@ -358,6 +347,7 @@ export class MHLSettingsManager {
     }
     return { [dependsOn]: !invert };
   }
+
   #processVisibilityData(setting, visibilityData) {
     const func = `${funcPrefix}#processVisibilityData`;
     const data = { setting, visibilityData, module: this.#module.title };
@@ -454,6 +444,7 @@ export class MHLSettingsManager {
     }
     return goodHooks.length ? goodHooks : false;
   }
+
   setHooks(setting, hooks) {
     const func = `${funcPrefix}#setHooks`;
     if (!this.#requireSetting(setting, func)) return undefined;
@@ -551,6 +542,7 @@ export class MHLSettingsManager {
       }
     });
   }
+
   #replaceWithButton(div, data) {
     const input = htmlQuery(div, ".form-fields").children[0];
     div.classList.add("submenu");
@@ -561,6 +553,7 @@ export class MHLSettingsManager {
     button.addEventListener("click", data.action ?? (() => true));
     input.replaceWith(button);
   }
+
   #updateVisibility(setting, event) {
     const func = `${funcPrefix}#updateVisibility`;
     const section = htmlClosest(event.target, "section.mhl-settings-manager");
@@ -596,6 +589,7 @@ export class MHLSettingsManager {
     }
     div.style.display = show ? "flex" : "none";
   }
+
   #addVisibilityListeners(div, data) {
     const func = `${funcPrefix}#addVisibilityListeners`;
     const section = htmlClosest(div, "section.mhl-settings-manager");
@@ -623,8 +617,13 @@ export class MHLSettingsManager {
     span.classList.add("mhl-reset-all");
     span.innerHTML = `<a data-reset-all="${this.#module.id}"><i class="fa-regular fa-reply-all"></i></a>`;
     const anchor = htmlQuery(span, "a");
-    anchor.addEventListener("click", this.#onResetAllClick.bind(this));
+    anchor.addEventListener("click", this.#onResetMultipleClick.bind(this));
     h2.appendChild(span);
+  }
+
+  #addResetGroupButtons(section) {
+    const func = `${funcPrefix}#addResetGroupButtons`;
+    const h3s = htmlQueryAll(section, 'h3[data-group]')
   }
 
   #addResetButton(div) {
@@ -656,7 +655,7 @@ export class MHLSettingsManager {
     const anchor = htmlQuery(section, `a[data-reset-all="${this.#module.id}"]`);
     const formValues = this.#getFormValues(section);
     const isGM = isRealGM(game.user);
-    this.#resetAllListener.listener ??= this.#onResetAllClick.bind(this);
+    this.#resetAllListener.listener ??= this.#onResetMultipleClick.bind(this);
     // I know ?? undefined is redundant, but it'll help me remember. === false because no default returns undefined.
     // also check for GM status for world settings
     const resettables = this.#settings.filter(
@@ -748,8 +747,8 @@ export class MHLSettingsManager {
       return acc;
     }, {});
   }
-  async #onResetAllClick(event) {
-    const func = `${funcPrefix}#onResetAllClick`;
+  async #onResetMultipleClick(event) {
+    const func = `${funcPrefix}#onResetMultipleClick`;
     const section = htmlClosest(event.target, "section.mhl-settings-manager");
     const formValues = this.#getFormValues(section);
     let defaultlessCount = 0;
@@ -758,7 +757,16 @@ export class MHLSettingsManager {
     const areDefaultList = [];
     const changed = {};
     const isGM = isRealGM(game.user);
-    for (const [setting, data] of this.#settings.entries()) {
+    let settings, division;
+    const anchor = htmlClosest(event.target, 'a')
+    if (anchor.dataset?.resetAll) {
+      division = this.#module.title;
+      settings = this.#settings.entries();
+    } else if (anchor.dataset?.resetGroup) {
+      division = anchor.dataset.resetGroup;
+      settings = this.#groups.get(division).map(s=>[s,this.#settings.get(s)]);
+    }
+    for (const [setting, data] of settings) {
       if ("button" in data) continue;
       if (data?.scope === "world" && !isGM) continue;
       if (!("default" in data)) {
@@ -784,11 +792,11 @@ export class MHLSettingsManager {
     }
 
     const dialogData = {
-      title: localize(`${PREFIX}.ResetAll.Title`),
-      content: `modules/${MODULE_ID}/templates/MHLSettingsManager-ResetAll.hbs`,
+      title: localize(`${PREFIX}.Reset.Title`),
+      content: `modules/${MODULE_ID}/templates/MHLSettingsManager-ResetMultiple.hbs`,
       contentData: {
         isGM: isRealGM(game.user),
-        module: this.#module.title,
+        division,
         defaultlessCount,
         defaultlessTooltip: defaultlessList.join(", "),
         areDefault,
@@ -811,6 +819,71 @@ export class MHLSettingsManager {
     this.#updateResetAllButton(event);
   }
 
+  #sortHTML(section) {
+    const existingNodes = Array.from(section.children);
+    const sortOrder = [existingNodes.shift()]; // add the h2 in first
+    if (this.options.groups) {
+      if (this.options.groups === "a") {
+        this.#groupOrder = new Set([
+          "ungrouped",
+          ...[...this.#groupOrder]
+            .filter((g) => g !== "ungrouped")
+            .toSorted((a, b) => localize(a).localeCompare(localize(b))),
+        ]);
+      }
+      for (const group of this.#groupOrder) {
+        if (group !== "ungrouped") {
+          const groupHeader = document.createElement("h3");
+          groupHeader.innerText = localize(group);
+          groupHeader.dataset.group = group;
+          sortOrder.push(groupHeader);
+        }
+        const settings = this.#groups
+          .get(group)
+          .filter((s) => this.#settings.get(s)?.config)
+          .map((s) => {
+            const node = existingNodes.find((n) => n.dataset?.settingId?.includes(s));
+            const name = htmlQuery(node, "label").innerText;
+            return { id: s, node, name };
+          });
+        if (this.options.sort) {
+          if (this.options.sort === "a") {
+            settings.sort((a, b) => a.name.localeCompare(b.name));
+          } else {
+            settings.sort(this.options.sort);
+          }
+        }
+        for (const setting of settings) {
+          sortOrder.push(setting.node);
+        }
+      }
+    } else if (this.options.sort) {
+      const settings = this.#settings
+        .filter((s) => s?.config)
+        .map((s) => {
+          const node = existingNodes.find((n) => n.dataset?.settingId?.includes(s.key));
+          mhlog({ node, setting: s });
+          const name = htmlQuery(node, "label").innerText;
+          return { id: s, node, name };
+        });
+
+      if (this.options.sort === "a") {
+        settings.sort((a, b) => a.name.localeCompare(b.name));
+      } else {
+        settings.sort(this.options.sort);
+      }
+      for (const setting of settings) {
+        sortOrder.push(setting.node);
+      }
+    } else {
+      //no sorting to be done
+      return;
+    }
+    //do the reorg
+    for (const node of sortOrder) {
+      section.appendChild(node);
+    }
+  }
   async #onResetClick(event) {
     const skipDialog = event.detail?.skipDialog ?? false;
     const div = htmlClosest(event.target, "div[data-setting-id]");

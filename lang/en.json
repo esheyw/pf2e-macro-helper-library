@@ -31,12 +31,11 @@
         "Tooltip": "Reset this setting to its default value",
         "IsDefault": "Setting is currently equal to its default value"
       },
-      "ResetAll": {
+      "ResetMultiple": {
         "AllDefault": "All settings are currently equal to their default value",
         "Body": "This module has <span class=\"count-tooltip\" data-tooltip-direction=\"UP\" data-tooltip=\"{defaultlessTooltip}\">{defaultlessCount}</span> setting(s) without defaults, and <span class=\"count-tooltip\" data-tooltip-direction=\"UP\" data-tooltip=\"{areDefaultTooltip}\">{areDefault}</span> setting(s) that are unchanged from their default. This action will reset:",
         "Footer": "Note: This will apply immediately to the actual settings, not just the inputs in the settings window.",
-        "Header": "Reset All {module} Settings?",
-        "Title": "Reset All to Default",
+        "Header": "Reset All {division} Settings?",
         "Tooltip": "Reset all of this module's settings to default values"
       },
       "ColorPicker": {
@@ -68,7 +67,9 @@
         "InvalidSettingsMap": "Settings data Map must be entirely string keys and object values.",
         "InvalidSettingsObject": "Settings data object must be entirely string keys and object values.",
         "InvalidSettingsArray": "Settings data Array must be entirely objects with string `id` keys.",
-        "InvalidSettingsUnknown": "Settings data of unknown format cannot be processed."
+        "InvalidSettingsUnknown": "Settings data of unknown format cannot be processed.",
+        "InvalidGroup": "Group names must be strings.",
+        "InvalidSort": "The `sort` option, if provided, must be the string \"a\" or a string comparison function. Reverting to registration order"
       },
       "Warning": {
         "CacheMiss": "Cache miss retrieving setting {key} from module {module}",
@@ -206,11 +207,11 @@
         "Hint": "Show banner notifications on macro error? (errors will be in console either way)"
       },
       "LegacyAccess": {
-        "Name": "Enable legacy access to MHL API",
+        "Name": "Legacy API Access",
         "Hint": "Populates `game.pf2emhl`, as is tradition. Available only after the Setup hook."
       },
       "GlobalAccess": {
-        "Name": "Global API access",
+        "Name": "Global API Access",
         "Hint": "Makes the MHL API accessible via just `mhl` in the global scope. Available only after the Setup hook."
       }
     },

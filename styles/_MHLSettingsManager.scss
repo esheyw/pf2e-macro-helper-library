@@ -24,7 +24,9 @@ section.mhl-settings-manager {
       pointer-events: none;
     }
   }
-
+  h3[data-group] {
+    border-bottom: 1px solid var(--color-underline-header);
+  }
   [data-setting-id] {
     // .mhl-settings-button {
     // padding-top: 0.2em;
