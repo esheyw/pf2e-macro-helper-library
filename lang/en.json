@@ -17,6 +17,7 @@
         "The": "the"
       }
     },
+
     "PickAThing": {
       "Title": "Pick A Thing",
       "Error": {
@@ -36,7 +37,7 @@
         "Body": "This module has <span class=\"count-tooltip\" data-tooltip-direction=\"UP\" data-tooltip=\"{defaultlessTooltip}\">{defaultlessCount}</span> setting(s) without defaults, and <span class=\"count-tooltip\" data-tooltip-direction=\"UP\" data-tooltip=\"{areDefaultTooltip}\">{areDefault}</span> setting(s) that are unchanged from their default. This action will reset:",
         "Footer": "Note: This will apply immediately to the actual settings, not just the inputs in the settings window.",
         "Header": "Reset All {division} Settings?",
-        "Tooltip": "Reset all of this module's settings to default values"
+        "Tooltip": "Reset all of this {division}'s settings to default values"
       },
       "ColorPicker": {
         "ValidHexCode": "Must be a # followed by a valid 6-character hex color code"
@@ -69,7 +70,8 @@
         "InvalidSettingsArray": "Settings data Array must be entirely objects with string `id` keys.",
         "InvalidSettingsUnknown": "Settings data of unknown format cannot be processed.",
         "InvalidGroup": "Group names must be strings.",
-        "InvalidSort": "The `sort` option, if provided, must be the string \"a\" or a string comparison function. Reverting to registration order"
+        "InvalidSort": "The `sort` option, if provided, must be the string \"a\" or a string comparison function. Reverting to registration order",
+        "InvalidResetButtons": "The `resetButtons` option, if provided, must be either true or false, or an array of strings limited to `all`, `setting`, `group`, or `module`. Defaulting to false."
       },
       "Warning": {
         "CacheMiss": "Cache miss retrieving setting {key} from module {module}",
