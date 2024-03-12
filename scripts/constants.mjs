@@ -25,4 +25,12 @@ export const SETTINGS = {
     scope: "client",
     type: Boolean,
   },
+  "acknowledged-deprecation": {
+    config: true,
+    default: false,
+    type: Boolean,
+    scope: "world",
+    name: "MHL.Settings.Deprecation.Name",
+    hint: "MHL.Settings.Deprecation.Hint",
+  },
 };

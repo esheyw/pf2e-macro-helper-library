@@ -52,3 +52,6 @@
 
 ## Version 0.2.8
 - Test cli pack-on-release
+
+## Version 0.2.9
+- Closing release, development has moved to the system-agnostic [Macro & Helper Library](https://github.com/esheyw/macro-helper-library)

@@ -1,4 +1,10 @@
 # PF2E Macro & Helper Library
+<h2 style="color:red">Development Discontinued</h2>
+See replacement module at https://github.com/esheyw/macro-helper-library
+
+Normal readme continues below: 
+---
+
 This module exists because I'm not good enough at TypeScript to contribute directly to Workbench. 
 It is a collection of macros and helper functions I've written for PF2e. It will (hopefully) be continually expanding. If you have a macro you'd like to contribute, and it's unsuitable for inclusion in Symon's repo (ie, it uses some of the helper functions provided by this module), feel free to open a PR, or open an issue if you don't want to git.
 

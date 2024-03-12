@@ -120,6 +120,10 @@
       "NotifyOnError": {
         "Name": "Banner Notifications",
         "Hint": "Show banner notifications on macro error? (errors will be in console either way)"
+      },
+      "Deprecation": {
+        "Name": "Acknowledged Deprecation Warning",
+        "Hint": "Marks that you have acknowledged that this module is deprecated in favour of Macro & Helper Library."
       }
     }
   }

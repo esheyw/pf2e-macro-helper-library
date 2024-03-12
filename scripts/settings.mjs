@@ -22,6 +22,6 @@ export function updateSettingsCache() {
 
 export function setting(key) {
   const settingPath = key.replace("_", ".");
-  const cached = fu.getProperty(game.pf2mhl.settings, settingPath);
+  const cached = fu.getProperty(game.pf2emhl.settings, settingPath);
   return cached !== undefined ? cached : game.settings.get(MODULE_ID, key);
 }
