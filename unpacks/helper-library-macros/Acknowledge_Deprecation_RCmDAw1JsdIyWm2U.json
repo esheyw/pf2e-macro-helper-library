@@ -1,0 +1,27 @@
+{
+  "name": "Acknowledge Deprecation",
+  "type": "script",
+  "author": "xuYHxk9sJoYKM7d6",
+  "img": "icons/sundries/misc/tombstone.webp",
+  "scope": "global",
+  "command": "const ack = game.settings.get('pf2e-macro-helper-library', 'acknowledged-deprecation')\nif (ack) {\n  return ui.notifications.error(\"Deprecation already acknowledged.\")\n}\nif (game.user !== game.users.activeGM) {\n  return ui.notifications.error(\"Only an active GM can acknowledge the deprecation warning.\");\n}\ngame.settings.set('pf2e-macro-helper-library', 'acknowledged-deprecation', true);\nChatMessage.create({\n  whisper: [game.user.id],\n  content: \"PF2E-MHL Deprecation Acknowledged, won't prompt you again.\"\n});",
+  "folder": null,
+  "ownership": {
+    "default": 0,
+    "xuYHxk9sJoYKM7d6": 3
+  },
+  "flags": {
+    "core": {}
+  },
+  "_stats": {
+    "systemId": "pf2e",
+    "systemVersion": "5.14.3",
+    "coreVersion": "11.315",
+    "createdTime": 1710285029226,
+    "modifiedTime": 1710286626084,
+    "lastModifiedBy": "xuYHxk9sJoYKM7d6"
+  },
+  "_id": "RCmDAw1JsdIyWm2U",
+  "sort": 0,
+  "_key": "!macros!RCmDAw1JsdIyWm2U"
+}
